@@ -13,7 +13,7 @@ import numpy
 seed=7
 numpy.random.seed(seed)
 #%%
-dataset=numpy.loadtxt('C:/Users/daij12/Documents/Analysis/ml/Coldz/pima-indians-diabetes.csv',delimiter=',')
+dataset=numpy.loadtxt('C:/gitLocal/ML/pima-indians-diabetes.csv',delimiter=',')
 #%%
 X=dataset[:,0:8]
 Y=dataset[:,8]
