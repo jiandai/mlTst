@@ -2,6 +2,13 @@
 """
 Version 20170125 by Jian: follow the tutorial
 http://machinelearningmastery.com/machine-learning-in-python-step-by-step/
+
+
+Version 20170127 by Jian: test on rescomp 
+ImportError: cannot import name model_selection
+result:
+>>> sklearn.__version__
+'0.15.2'
 """
 
 #%%
@@ -32,7 +39,7 @@ dataset.groupby('class').size()
 #dataset.hist()
 #plt.show()
 #%%
-pandas.tools.plotting.scatter_matrix(dataset)
+#pandas.tools.plotting.scatter_matrix(dataset)
 #%%
 array = dataset.values
 #%%
@@ -69,12 +76,12 @@ for name, model in models:
  
  
 #%%
-fig = plt.figure()
-fig.suptitle('Algorithm Comparison')
-ax = fig.add_subplot(111)
-plt.boxplot(results)
-ax.set_xticklabels(names)
-plt.show()
+#fig = plt.figure()
+#fig.suptitle('Algorithm Comparison')
+#ax = fig.add_subplot(111)
+#plt.boxplot(results)
+#ax.set_xticklabels(names)
+#plt.show()
 
 #%%
 knn = neighbors.KNeighborsClassifier()
