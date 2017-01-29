@@ -30,7 +30,6 @@ dataset = dataframe.values
 X = dataset[:,0:13]
 Y = dataset[:,13]
 
-
 #%%
 def baseline_model():
 	# create model
@@ -50,7 +49,8 @@ estimator = KerasRegressor(build_fn=baseline_model, nb_epoch=100, batch_size=5, 
 
 #%%
 kfold = KFold(n_splits=10, random_state=seed)
-results = cross_val_score(estimator, X, Y, cv=kfold)
+results = cross_val_score(estimator, X, Y, cv=kfold) # Error on home laptop
+quit()
 print("Results: %.2f (%.2f) MSE" % (results.mean(), results.std()))
 # Results: 38.04 (28.15) MSE
 

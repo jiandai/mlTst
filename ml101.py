@@ -9,12 +9,33 @@ ImportError: cannot import name model_selection
 result:
 >>> sklearn.__version__
 '0.15.2'
+
+Version 20170128 by Jian: test on home laptop
 """
 
 #%%
 import pandas
 #%%
+url='https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data'
+#%%
+names = ['sepal-length', 'sepal-width', 'petal-length', 'petal-width', 'class']
+dataset = pandas.read_csv(url, names=names)
+print(dataset)
+#%%
+print(dataset.groupby('class').size())
+#%%
 import matplotlib.pyplot as plt
+#%%
+dataset.plot(kind='box', subplots=True, layout=(2,2), sharex=False, sharey=False)
+plt.show()
+#%%
+dataset.hist()
+plt.show()
+#%%
+pandas.tools.plotting.scatter_matrix(dataset)
+
+
+
 #%%
 #import sklearn
 from sklearn import model_selection
@@ -25,21 +46,6 @@ from sklearn import tree
 from sklearn import naive_bayes
 from sklearn import svm
 from sklearn import metrics
-#%%
-url='https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data'
-#%%
-names = ['sepal-length', 'sepal-width', 'petal-length', 'petal-width', 'class']
-dataset = pandas.read_csv(url, names=names)
-#%%
-dataset.groupby('class').size()
-#%%
-#dataset.plot(kind='box', subplots=True, layout=(2,2), sharex=False, sharey=False)
-#plt.show()
-#%%
-#dataset.hist()
-#plt.show()
-#%%
-#pandas.tools.plotting.scatter_matrix(dataset)
 #%%
 array = dataset.values
 #%%
@@ -76,12 +82,12 @@ for name, model in models:
  
  
 #%%
-#fig = plt.figure()
-#fig.suptitle('Algorithm Comparison')
-#ax = fig.add_subplot(111)
-#plt.boxplot(results)
-#ax.set_xticklabels(names)
-#plt.show()
+fig = plt.figure()
+fig.suptitle('Algorithm Comparison')
+ax = fig.add_subplot(111)
+plt.boxplot(results)
+ax.set_xticklabels(names)
+plt.show()
 
 #%%
 knn = neighbors.KNeighborsClassifier()

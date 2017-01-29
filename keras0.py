@@ -5,22 +5,39 @@ Created on Thu Jan 26 06:43:45 2017
 @author: daij12
 
 ref: http://machinelearningmastery.com/tutorial-first-neural-network-python-keras/
+
+ver 20170129 by jian: adjust to home laptop and source from web
 """
+
+
+#%%
+import pandas
+#%%
+url='http://archive.ics.uci.edu/ml/machine-learning-databases/pima-indians-diabetes/pima-indians-diabetes.data'
+names = ['sepal-length', 'sepal-width', 'petal-length', 'petal-width', 'class']
+dataframe= pandas.read_csv(url,header=None)
+dataset= dataframe.values
+
+
+#%%
+import numpy
+#%%
+#dataset=numpy.loadtxt('C:/gitLocal/ML/pima-indians-diabetes.csv',delimiter=',')
+#%%
+X=dataset[:,0:8]
+Y=dataset[:,8]
+
+
+#%%
+seed=7
+numpy.random.seed(seed)
+
 
 #%%
 from keras.models import Sequential
 #%%
 from keras.layers import Dense
-#%%
-import numpy
-#%%
-seed=7
-numpy.random.seed(seed)
-#%%
-dataset=numpy.loadtxt('C:/gitLocal/ML/pima-indians-diabetes.csv',delimiter=',')
-#%%
-X=dataset[:,0:8]
-Y=dataset[:,8]
+
 
 #%%
 model=Sequential()

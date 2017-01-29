@@ -24,9 +24,19 @@ from scipy.misc import toimage
 for i in range(0, 9):
 	pyplot.subplot(330 + 1 + i)
 	pyplot.imshow(toimage(X_train[i]))
+pyplot.show()
+
+import numpy
+#print(X_train.shape)
+#print(X_test.shape)
+if X_train.shape==(50000,32,32,3):
+	X_train=numpy.swapaxes(numpy.swapaxes(X_train,2,3),1,2)
+if X_test.shape==(10000,32,32,3):
+	X_test=numpy.swapaxes(numpy.swapaxes(X_test,2,3),1,2)
+#print(X_train.shape)
+#print(X_test.shape)
 
 #%%
-import numpy
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import Dropout
@@ -66,7 +76,8 @@ model.add(Dropout(0.5))
 model.add(Dense(num_classes, activation='softmax'))
 
 #%%
-epochs = 25
+#epochs = 25
+epochs = 5
 lrate = 0.01
 decay = lrate/epochs
 sgd = SGD(lr=lrate, momentum=0.9, decay=decay, nesterov=False)
