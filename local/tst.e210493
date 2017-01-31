@@ -1,0 +1,19 @@
+Traceback (most recent call last):
+  File "ml102.py", line 14, in <module>
+    import pandas
+  File "/gne/research/apps/python/2.7.7/x86_64-linux-2.6-rhel6/lib/python2.7/site-packages/pandas/__init__.py", line 6, in <module>
+    from . import hashtable, tslib, lib
+  File "numpy.pxd", line 157, in init pandas.hashtable (pandas/hashtable.c:22145)
+  File "/gne/research/apps/python/2.7.7/x86_64-linux-2.6-rhel6/lib/python2.7/site-packages/numpy/__init__.py", line 153, in <module>
+    from . import add_newdocs
+  File "/gne/research/apps/python/2.7.7/x86_64-linux-2.6-rhel6/lib/python2.7/site-packages/numpy/add_newdocs.py", line 13, in <module>
+    from numpy.lib import add_newdoc
+  File "/gne/research/apps/python/2.7.7/x86_64-linux-2.6-rhel6/lib/python2.7/site-packages/numpy/lib/__init__.py", line 18, in <module>
+    from .polynomial import *
+  File "/gne/research/apps/python/2.7.7/x86_64-linux-2.6-rhel6/lib/python2.7/site-packages/numpy/lib/polynomial.py", line 19, in <module>
+    from numpy.linalg import eigvals, lstsq, inv
+  File "/gne/research/apps/python/2.7.7/x86_64-linux-2.6-rhel6/lib/python2.7/site-packages/numpy/linalg/__init__.py", line 50, in <module>
+    from .linalg import *
+  File "/gne/research/apps/python/2.7.7/x86_64-linux-2.6-rhel6/lib/python2.7/site-packages/numpy/linalg/linalg.py", line 29, in <module>
+    from numpy.linalg import lapack_lite, _umath_linalg
+ImportError: libptf77blas.so.3: cannot open shared object file: No such file or directory

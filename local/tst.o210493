@@ -1,0 +1,37 @@
+libptf77blas.so.3: cannot open shared object file: No such file or directory
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@rescomp7009>
+Subject: Job 210493: <python ml102.py> in cluster <rescomp> Exited
+
+Job <python ml102.py> was submitted from host <rescomp5003> by user <daij12> in cluster <rescomp>.
+Job was executed on host(s) <rescomp7009>, in queue <gpu>, as user <daij12> in cluster <rescomp>.
+</gne/home/daij12> was used as the home directory.
+</gne/home/daij12/gitLocal/mlTst> was used as the working directory.
+Started at Sun Jan 29 13:49:54 2017
+Results reported on Sun Jan 29 13:49:55 2017
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python ml102.py
+------------------------------------------------------------
+
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time :               0.12 sec.
+    Total Requested Memory : 3.00 GB
+    Delta Memory :           -
+    (Delta: the difference between Total Requested Memory and Max Memory.)
+
+The output (if any) is above this job summary.
+
+
+
+PS:
+
+Read file <tst.e210493> for stderr output of this job.
+

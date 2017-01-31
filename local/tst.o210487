@@ -1,0 +1,43 @@
+class
+Iris-setosa        50
+Iris-versicolor    50
+Iris-virginica     50
+dtype: int64
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@rescomp1226>
+Subject: Job 210487: <python ml102.py> in cluster <rescomp> Done
+
+Job <python ml102.py> was submitted from host <rescomp5003> by user <daij12> in cluster <rescomp>.
+Job was executed on host(s) <rescomp1226>, in queue <medium>, as user <daij12> in cluster <rescomp>.
+</gne/home/daij12> was used as the home directory.
+</gne/home/daij12/gitLocal/mlTst> was used as the working directory.
+Started at Sun Jan 29 13:45:48 2017
+Results reported on Sun Jan 29 13:45:55 2017
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python ml102.py
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :               0.96 sec.
+    Total Requested Memory : 5.00 GB
+    Delta Memory :           -
+    (Delta: the difference between Total Requested Memory and Max Memory.)
+    Max Processes :          3
+    Max Threads :            4
+
+The output (if any) is above this job summary.
+
+
+
+PS:
+
+Read file <tst.e210487> for stderr output of this job.
+
