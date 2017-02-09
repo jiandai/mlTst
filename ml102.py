@@ -10,7 +10,7 @@ pip install --user -U scikit-learn
 """
 import os
 import sys
-sys.path.insert(1, os.path.expanduser('~')+'/.local/lib/python2.7/site-packages')
+sys.path.insert(0, os.path.expanduser('~')+'/.local/lib/python2.7/site-packages')
 
 
 #%%
@@ -25,25 +25,20 @@ print(dataset.groupby('class').size())
 #%%
 import matplotlib.pyplot as plt
 #%%
-# cannot run on rescomp
 #dataset.plot(kind='box', subplots=True, layout=(2,2), sharex=False, sharey=False)
 #plt.show()
 #%%
-# cannot run on rescomp
 #dataset.hist()
 #plt.show()
 #%%
-# cannot run on rescomp
 #pandas.tools.plotting.scatter_matrix(dataset)
+#plt.show()
 
 
 
 #%%
-#import sklearn
-# cannot run on rescomp: ImportError: cannot import name model_selection
 from sklearn import model_selection
 from sklearn import linear_model
-# cannot run on rescomp: ImportError: cannot import name discriminant_analysis
 from sklearn import discriminant_analysis
 from sklearn import neighbors
 from sklearn import tree
