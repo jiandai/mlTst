@@ -1,17 +1,20 @@
 # -*- coding: utf-8 -*-
 """
-Version 20170125 by Jian: follow the tutorial
-http://machinelearningmastery.com/machine-learning-in-python-step-by-step/
-
-
-Version 20170127 by Jian: test on rescomp 
+Version 20170129 by Jian: issue /w sklearn version
 ImportError: cannot import name model_selection
 result:
 >>> sklearn.__version__
 '0.15.2'
+>>> sklearn.__path__
+'/gne/research/apps/python/2.7.7/x86_64-linux-2.6-rhel6/lib/python2.7/site-packages/scikit_learn-0.15.2-py2.7-linux-x86_64.egg'
 
-Version 20170128 by Jian: test on home laptop
+Version 20170208 by Jian: install sklearn locally
+pip install --user -U scikit-learn
 """
+import os
+import sys
+sys.path.insert(0, os.path.expanduser('~')+'/.local/lib/python2.7/site-packages') # force to use local packages
+
 
 #%%
 import pandas
@@ -20,9 +23,8 @@ url='https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data'
 #%%
 names = ['sepal-length', 'sepal-width', 'petal-length', 'petal-width', 'class']
 dataset = pandas.read_csv(url, names=names)
-print(dataset)
-#%%
 print(dataset.groupby('class').size())
+#%%
 #%%
 import matplotlib.pyplot as plt
 #%%
@@ -33,8 +35,7 @@ dataset.hist()
 plt.show()
 #%%
 pandas.tools.plotting.scatter_matrix(dataset)
-
-
+plt.show()
 
 #%%
 #import sklearn
@@ -55,6 +56,10 @@ Y = array[:,4]
 validation_size = 0.20
 #%%
 seed = 7
+
+
+
+
 #%%
 X_train, X_validation, Y_train, Y_validation = model_selection.train_test_split(X, Y, test_size=validation_size, random_state=seed)
 
