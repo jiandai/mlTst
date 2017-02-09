@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 """
-
-Version 20170129 by Jian: 
-note:
+Version 20170129 by Jian: issue /w sklearn version
 ImportError: cannot import name model_selection
 result:
 >>> sklearn.__version__
 '0.15.2'
-
+Version 20170208 by Jian: install sklearn locally
+pip install --user -U scikit-learn
 """
+import os
+import sys
+sys.path.insert(1, os.path.expanduser('~')+'/.local/lib/python2.7/site-packages')
+
 
 #%%
 import pandas
@@ -38,10 +41,10 @@ import matplotlib.pyplot as plt
 #%%
 #import sklearn
 # cannot run on rescomp: ImportError: cannot import name model_selection
-#from sklearn import model_selection
+from sklearn import model_selection
 from sklearn import linear_model
 # cannot run on rescomp: ImportError: cannot import name discriminant_analysis
-#from sklearn import discriminant_analysis
+from sklearn import discriminant_analysis
 from sklearn import neighbors
 from sklearn import tree
 from sklearn import naive_bayes
