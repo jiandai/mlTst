@@ -40,6 +40,12 @@ from keras.wrappers.scikit_learn import KerasRegressor
 estimator = KerasRegressor(build_fn=baseline_model, nb_epoch=100, batch_size=5, verbose=0) 
 
 
+
+
+# force to use local packages, in particular, sklearn
+import os
+import sys
+sys.path.insert(0, os.path.expanduser('~')+'/.local/lib/python2.7/site-packages') 
 from sklearn.model_selection import KFold
 kfold = KFold(n_splits=10, random_state=seed)
 
