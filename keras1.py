@@ -50,10 +50,54 @@ from sklearn.model_selection import KFold
 kfold = KFold(n_splits=10, random_state=seed)
 
 from sklearn.model_selection import cross_val_score
-results = cross_val_score(estimator, X, Y, cv=kfold) # Error on home laptop
+results = cross_val_score(estimator, X, Y, cv=kfold) 
+print("1-nnet Results: %.2f (%.2f) MSE" % (results.mean(), results.std()))
 
-print("Results: %.2f (%.2f) MSE" % (results.mean(), results.std()))
-# Results: 38.04 (28.15) MSE
+
+# vs linear model
+from sklearn import linear_model
+
+model = linear_model.LinearRegression()
+seed = 11
+kfold = KFold(n_splits=10, random_state=seed)
+results = cross_val_score(model, X, Y, cv=kfold)
+print("OLS Results: %.2f (%.2f) MSE" % (results.mean(), results.std()))
+
+model = linear_model.Lasso(alpha = 0.1)
+reg = linear_model.LinearRegression()
+seed = 11
+kfold = KFold(n_splits=10, random_state=seed)
+results = cross_val_score(model, X, Y, cv=kfold)
+print("Lasso Results: %.2f (%.2f) MSE" % (results.mean(), results.std()))
+
+model = linear_model.Ridge(alpha = 0.1)
+reg = linear_model.LinearRegression()
+seed = 11
+kfold = KFold(n_splits=10, random_state=seed)
+results = cross_val_score(model, X, Y, cv=kfold)
+print("Ridge Results: %.2f (%.2f) MSE" % (results.mean(), results.std()))
+
+'''
+1-nnet Results: 38.04 (28.15) MSE
+OLS Results: 0.20 (0.60) MSE
+Lasso Results: 0.26 (0.50) MSE
+Ridge Results: 0.22 (0.58) MSE
+(really?)
+'''
+quit()
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
