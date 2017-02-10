@@ -1,66 +1,66 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Jan 25 20:52:44 2017
-
 @author: daij12
 
 ref: http://machinelearningmastery.com/regression-tutorial-keras-deep-learning-library-python/
+ver 20170210 by jian: recap
+
 """
-#%%
-import numpy
+
+
+
 import pandas
-#%%
-#import theano
-
-##%%
-from keras.models import Sequential
-
-from keras.layers import Dense
-from keras.wrappers.scikit_learn import KerasRegressor
-#%%
-from sklearn.model_selection import cross_val_score
-from sklearn.model_selection import KFold
-from sklearn.preprocessing import StandardScaler
-from sklearn.pipeline import Pipeline
-#%%
-
 dataframe = pandas.read_csv('https://archive.ics.uci.edu/ml/machine-learning-databases/housing/housing.data', delim_whitespace=True, header=None)
+print(type(dataframe))
+print(dataframe.shape)
 dataset = dataframe.values
-# split into input (X) and output (Y) variables
+print(type(dataset))
+print(dataset.shape)
+
 X = dataset[:,0:13]
 Y = dataset[:,13]
 
-#%%
+
+from keras.models import Sequential
+from keras.layers import Dense
+
 def baseline_model():
-	# create model
 	model = Sequential()
 	model.add(Dense(13, input_dim=13, init='normal', activation='relu'))
 	model.add(Dense(1, init='normal'))
-	# Compile model
 	model.compile(loss='mean_squared_error', optimizer='adam')
 	return model
 
-#%%
-# fix random seed for reproducibility
+
 seed = 7
+import numpy
 numpy.random.seed(seed)
-# evaluate model with standardized dataset
+from keras.wrappers.scikit_learn import KerasRegressor
 estimator = KerasRegressor(build_fn=baseline_model, nb_epoch=100, batch_size=5, verbose=0) 
 
-#%%
+
+from sklearn.model_selection import KFold
 kfold = KFold(n_splits=10, random_state=seed)
+
+from sklearn.model_selection import cross_val_score
 results = cross_val_score(estimator, X, Y, cv=kfold) # Error on home laptop
-quit()
+
 print("Results: %.2f (%.2f) MSE" % (results.mean(), results.std()))
 # Results: 38.04 (28.15) MSE
 
 
-#%%
+
+
+
+
 numpy.random.seed(seed)
 estimators = []
+from sklearn.preprocessing import StandardScaler
 estimators.append(('standardize', StandardScaler()))
 estimators.append(('mlp', KerasRegressor(build_fn=baseline_model, nb_epoch=50, batch_size=5, verbose=0)))
-#%%
+
+from sklearn.pipeline import Pipeline
 pipeline = Pipeline(estimators)
 kfold = KFold(n_splits=10, random_state=seed)
 results = cross_val_score(pipeline, X, Y, cv=kfold)
@@ -68,7 +68,9 @@ print("Standardized: %.2f (%.2f) MSE" % (results.mean(), results.std()))
 # Standardized: 28.24 (26.25) MSE
 
 
-#%%
+
+
+
 def larger_model():
 	# create model
 	model = Sequential()
@@ -79,7 +81,6 @@ def larger_model():
 	model.compile(loss='mean_squared_error', optimizer='adam')
 	return model
 
-#%%
 numpy.random.seed(seed)
 estimators = []
 estimators.append(('standardize', StandardScaler()))
