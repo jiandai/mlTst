@@ -103,14 +103,14 @@ lm(model = estimator)
 
 
 
-
+quit()
 # Part 2:
 
 
 
 
 
-
+import numpy
 numpy.random.seed(seed)
 estimators = []
 from sklearn.preprocessing import StandardScaler
