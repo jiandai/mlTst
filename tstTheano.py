@@ -29,7 +29,8 @@ f = theano.function([input],output)
 #%%
 from PIL import Image
 #%%
-img = Image.open('C:\\gitLocal\\ML\\data\\3wolfmoon.jpg')
+#img = Image.open('C:\\gitLocal\\ML\\data\\3wolfmoon.jpg')
+img = Image.open('./data/3wolfmoon.jpg') # assume to run the script from proj root
 #%%
 img = numpy.asarray(img,dtype='float64') / 256.
 #%%
@@ -38,6 +39,7 @@ img_ = img.transpose(2,0,1).reshape(1,3,639,516)
 # Apparently img_.dtype is 'float64'
 filtered_img = f(img_.astype('float32'))
 #%%
+'''
 import pylab
 #%%
 pylab.subplot(1,3,1)
@@ -51,7 +53,7 @@ pylab.subplot(1,3,3)
 pylab.axis('off')
 pylab.imshow(filtered_img[0,1,:,:])
 pylab.show()
-
+'''
 #%%
 invals = numpy.random.RandomState(1).rand(3,2,5,5)
 #%%
