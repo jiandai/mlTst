@@ -374,4 +374,8 @@ epoch 200, minibatch 100/100, validation error 0.910000 %
 Optimization complete.
 Best validation score of 0.910000 % obtained at iteration 17000, with test performance 0.920000 %
 The code for file convolutional_mlp.py ran for 208.43m
+vs in the tutorial:
+Optimization complete.
+Best validation score of 0.910000 % obtained at iteration 17800,with test performance 0.920000 %
+The code for file convolutional_mlp.py ran for 380.28m
 '''
