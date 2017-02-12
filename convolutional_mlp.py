@@ -348,3 +348,30 @@ if __name__ == '__main__':
 
 def experiment(state, channel):
     evaluate_lenet5(state.learning_rate, dataset=state.dataset)
+
+'''
+... loading data
+... building the model
+... training
+training @ iter =  0
+epoch 1, minibatch 100/100, validation error 9.230000 %
+epoch 1, minibatch 100/100, test error of best model 9.520000 %
+training @ iter =  100
+epoch 2, minibatch 100/100, validation error 6.180000 %
+epoch 2, minibatch 100/100, test error of best model 6.500000 %
+
+... ...
+training @ iter =  19500
+epoch 196, minibatch 100/100, validation error 0.910000 %
+training @ iter =  19600
+epoch 197, minibatch 100/100, validation error 0.910000 %
+training @ iter =  19700
+epoch 198, minibatch 100/100, validation error 0.910000 %
+training @ iter =  19800
+epoch 199, minibatch 100/100, validation error 0.910000 %
+training @ iter =  19900
+epoch 200, minibatch 100/100, validation error 0.910000 %
+Optimization complete.
+Best validation score of 0.910000 % obtained at iteration 17000, with test performance 0.920000 %
+The code for file convolutional_mlp.py ran for 208.43m
+'''
