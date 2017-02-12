@@ -38,6 +38,9 @@ img_ = img.transpose(2,0,1).reshape(1,3,639,516)
 #%%
 # Apparently img_.dtype is 'float64'
 filtered_img = f(img_.astype('float32'))
+print type(filtered_img)
+print filtered_img.shape
+quit()
 #%%
 '''
 import pylab
