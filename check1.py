@@ -1,6 +1,7 @@
 # ver <20170214 by jian: benchmark on laptop
 # ver 20170214 by jian: benchmark on rescomp, cpu vs gpu
 # ref http://deeplearning.net/software/theano/tutorial/using_gpu.html
+# ref http://deeplearning.net/software/theano/library/config.html
 from theano import function, config, shared, tensor, sandbox
 import numpy
 import time
@@ -51,3 +52,10 @@ else:
 #  1.62323296]
 #Used the gpu
 
+# rescomp without loading cuda:
+#ERROR (theano.sandbox.cuda): nvcc compiler not found on $PATH. Check your nvcc installation and try again.
+#[Elemwise{exp,no_inplace}(<TensorType(float32, vector)>)]
+#Looping 1000 times took 1.971706 seconds
+#Result is [ 1.23178029  1.61879337  1.52278066 ...,  2.20771813  2.29967761
+#  1.62323284]
+#Used the cpu

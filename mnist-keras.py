@@ -1,6 +1,7 @@
 '''
 ver 20170212 by jian:
 	ref http://machinelearningmastery.com/handwritten-digit-recognition-using-convolutional-neural-networks-python-keras/
+ver 20170214 by jian: run on server /w gpu
 '''
 from keras.datasets import mnist
 # load (downloaded if needed) the MNIST dataset
@@ -91,8 +92,8 @@ K.set_image_dim_ordering('th')
 #tf.python.control_flow_ops = tf
 
 
-#N_EPOCH = 10
-N_EPOCH = 4
+N_EPOCH = 10
+#N_EPOCH = 4
 #model = baseline_model()
 model = larger_model()
 model.fit(X_train, y_train, validation_data=(X_test, y_test), nb_epoch=N_EPOCH, batch_size=200, verbose=2)
@@ -172,3 +173,28 @@ print("Baseline Error: %.2f%%" % (100-scores[1]*100))
 #Epoch 10/10
 #195s - loss: 0.0275 - acc: 0.9914 - val_loss: 0.0295 - val_acc: 0.9909
 #Baseline Error: 0.91%
+
+'''
+Result of large CNN /w gpu:
+Epoch 1/10
+1s - loss: 0.3776 - acc: 0.8797 - val_loss: 0.0809 - val_acc: 0.9744
+Epoch 2/10
+1s - loss: 0.0921 - acc: 0.9712 - val_loss: 0.0468 - val_acc: 0.9854
+Epoch 3/10
+1s - loss: 0.0672 - acc: 0.9791 - val_loss: 0.0375 - val_acc: 0.9881
+Epoch 4/10
+1s - loss: 0.0533 - acc: 0.9831 - val_loss: 0.0325 - val_acc: 0.9886
+Epoch 5/10
+1s - loss: 0.0462 - acc: 0.9857 - val_loss: 0.0316 - val_acc: 0.9887
+Epoch 6/10
+1s - loss: 0.0400 - acc: 0.9875 - val_loss: 0.0297 - val_acc: 0.9896
+Epoch 7/10
+1s - loss: 0.0366 - acc: 0.9881 - val_loss: 0.0236 - val_acc: 0.9922
+Epoch 8/10
+1s - loss: 0.0335 - acc: 0.9891 - val_loss: 0.0273 - val_acc: 0.9903
+Epoch 9/10
+1s - loss: 0.0303 - acc: 0.9901 - val_loss: 0.0225 - val_acc: 0.9926
+Epoch 10/10
+1s - loss: 0.0271 - acc: 0.9913 - val_loss: 0.0243 - val_acc: 0.9917
+Baseline Error: 0.83%
+'''
