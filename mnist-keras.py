@@ -87,14 +87,15 @@ K.set_image_dim_ordering('th')
 
 
 # ref http://stackoverflow.com/questions/40046619/keras-tensorflow-gives-the-error-no-attribute-control-flow-ops
-import tensorflow as tf
-tf.python.control_flow_ops = tf
+#import tensorflow as tf
+#tf.python.control_flow_ops = tf
 
 
-
+#N_EPOCH = 10
+N_EPOCH = 4
 #model = baseline_model()
 model = larger_model()
-model.fit(X_train, y_train, validation_data=(X_test, y_test), nb_epoch=10, batch_size=200, verbose=2)
+model.fit(X_train, y_train, validation_data=(X_test, y_test), nb_epoch=N_EPOCH, batch_size=200, verbose=2)
 scores = model.evaluate(X_test, y_test, verbose=0)
 print("Baseline Error: %.2f%%" % (100-scores[1]*100))
 
