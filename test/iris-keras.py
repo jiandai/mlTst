@@ -12,32 +12,50 @@ result:
 
 Version 20170128 by Jian: test on home laptop
 Version 20170212 by Jian: use keras for iris
+Version 20170220 by Jian: recap, revisit keras, *packaging
 """
 
 
-
-
+#
+url='https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data'
+csv_path='data/iris.csv'
 
 import pandas
-url='https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data'
-df= pandas.read_csv(url,header=None)
-dataset = df.values
+
+def acquire_data():
+	df= pandas.read_csv(url,header=None)
+	df.to_csv(csv_path,header=False,index=False)
+
+#acquire_data()
+
+df= pandas.read_csv(csv_path,header=None)
+
+dataset = df.values # return a <class 'numpy.ndarray'> type
 X = dataset[:,0:4].astype(float)
 Y = dataset[:,4]
+
+
 
 from sklearn.preprocessing import LabelEncoder
 encoder = LabelEncoder()
 encoder.fit(Y)
 encoded_Y = encoder.transform(Y)
+
 # convert integers to dummy variables (i.e. one hot encoded)
 from keras.utils import np_utils
 dummy_y = np_utils.to_categorical(encoded_Y)
 
-print(dummy_y)
-print(encoded_Y)
-
 from keras.models import Sequential
 from keras.layers import Dense
+
+model = Sequential()
+model.add(Dense(3,input_dim=4,activation='sigmoid'))
+model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
+model.fit(X,dummy_y,nb_epoch=100)
+print(model.summary())
+
+
+quit()
 def baseline_model():
 	model = Sequential()
 	model.add(Dense(4, input_dim=4, init='normal', activation='relu'))
