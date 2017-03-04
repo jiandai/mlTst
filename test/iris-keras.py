@@ -15,6 +15,11 @@ Version 20170212 by Jian: use keras for iris
 Version 20170220 by Jian: recap, revisit keras, *packaging
 Version 20170304 by Jian: review CV
 """
+# LOCAL only: on server
+import os
+import sys
+# force to use local packages, in particular, sklearn
+sys.path.insert(0, os.path.expanduser('~')+'/.local/lib/python2.7/site-packages')
 
 
 #
@@ -74,8 +79,24 @@ from sklearn.model_selection import cross_val_score
 results = cross_val_score(estimator, X, dummy_y, cv=kfold)
 print(results)
 print("Baseline: %.2f%% (%.2f%%)" % (results.mean()*100, results.std()*100))
+'''
+run on local:
+Using TensorFlow backend.
+[ 1.          0.93333334  0.93333334  1.          0.93333334  1.          1.
+  0.93333334  0.93333334  0.86666667]
+Baseline: 95.33% (4.27%)
 
-#Using TensorFlow backend.
-#[ 1.          0.93333334  0.93333334  1.          0.93333334  1.          1.
-#  0.93333334  0.93333334  0.86666667]
-#Baseline: 95.33% (4.27%)
+run on server:
+Using Theano backend.
+[ 0.53333334  0.93333334  1.          1.          0.26666667  1.          1.
+  0.93333334  0.93333334  0.86666667]
+Baseline: 84.67% (23.49%)
+
+[ 1.          0.93333334  1.          1.          1.          0.93333334
+  1.          0.93333334  1.          0.86666667]
+Baseline: 96.67% (4.47%)
+
+[ 1.          0.93333334  1.          1.          1.          1.          1.
+  0.93333334  1.          0.86666667]
+Baseline: 97.33% (4.42%)
+'''
