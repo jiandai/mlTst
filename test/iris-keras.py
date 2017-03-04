@@ -13,12 +13,14 @@ result:
 Version 20170128 by Jian: test on home laptop
 Version 20170212 by Jian: use keras for iris
 Version 20170220 by Jian: recap, revisit keras, *packaging
+Version 20170304 by Jian: review CV
 """
 
 
 #
 url='https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data'
-csv_path='data/iris.csv'
+#csv_path='data/iris.csv'
+csv_path='../data/iris.csv'
 
 import pandas
 
@@ -40,7 +42,6 @@ from sklearn.preprocessing import LabelEncoder
 encoder = LabelEncoder()
 encoder.fit(Y)
 encoded_Y = encoder.transform(Y)
-
 # convert integers to dummy variables (i.e. one hot encoded)
 from keras.utils import np_utils
 dummy_y = np_utils.to_categorical(encoded_Y)
@@ -48,14 +49,14 @@ dummy_y = np_utils.to_categorical(encoded_Y)
 from keras.models import Sequential
 from keras.layers import Dense
 
-model = Sequential()
-model.add(Dense(3,input_dim=4,activation='sigmoid'))
-model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
-model.fit(X,dummy_y,nb_epoch=100)
-print(model.summary())
+# baseline test : multinomial regression
+#model = Sequential()
+#model.add(Dense(3,input_dim=4,activation='sigmoid'))
+#model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
+#model.fit(X,dummy_y,nb_epoch=100)
+#print(model.summary())
 
 
-quit()
 def baseline_model():
 	model = Sequential()
 	model.add(Dense(4, input_dim=4, init='normal', activation='relu'))
@@ -71,7 +72,10 @@ seed=7
 kfold = KFold(n_splits=10, shuffle=True, random_state=seed)
 from sklearn.model_selection import cross_val_score
 results = cross_val_score(estimator, X, dummy_y, cv=kfold)
+print(results)
 print("Baseline: %.2f%% (%.2f%%)" % (results.mean()*100, results.std()*100))
 
-# Baseline: 96.67% (4.47%)
-
+#Using TensorFlow backend.
+#[ 1.          0.93333334  0.93333334  1.          0.93333334  1.          1.
+#  0.93333334  0.93333334  0.86666667]
+#Baseline: 95.33% (4.27%)
