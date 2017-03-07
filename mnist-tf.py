@@ -3,7 +3,9 @@
 ver <20170210 by jian
 ver 20170210 by jian: start using tf
 ref: https://www.tensorflow.org/tutorials/mnist/pros/
+ver 20170306 by jian: tested on rescomp4, https://github.com/tensorflow/tensorflow/issues/5514
 '''
+
 from tensorflow.examples.tutorials.mnist import input_data
 mnist = input_data.read_data_sets('MNIST_data', one_hot=True)
 
@@ -17,7 +19,11 @@ y_ = tf.placeholder(tf.float32, shape=[None, 10])
 W = tf.Variable(tf.zeros([784,10]))
 b = tf.Variable(tf.zeros([10]))
 
-sess.run(tf.global_variables_initializer())
+print(dir(tf))
+print(tf.__version__) # 0.10.0 for rescomp4 as of 3/6/2017
+
+#sess.run(tf.global_variables_initializer()) 
+sess.run(tf.initialize_all_variables())
 
 y = tf.matmul(x,W) + b
 cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(y, y_))
@@ -87,10 +93,11 @@ cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(y_conv, y
 train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
 correct_prediction = tf.equal(tf.argmax(y_conv,1), tf.argmax(y_,1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-sess.run(tf.global_variables_initializer())
+#sess.run(tf.global_variables_initializer())
+sess.run(tf.initialize_all_variables())
 
-#STEPS = 20000
-STEPS = 20
+#STEPS = 20
+STEPS = 20000
 for i in range(STEPS):
   batch = mnist.train.next_batch(50)
   if i%100 == 0:
