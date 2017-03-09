@@ -7,6 +7,7 @@ Created on Thu Jan 26 08:01:51 2017
 ref:
     http://machinelearningmastery.com/object-recognition-convolutional-neural-networks-keras-deep-learning-library/
     https://github.com/fchollet/keras/blob/master/examples/cifar10_cnn.py
+ver 20170308 by jian: to run on server /w 5 and 25 epoches
 """
 
 #%%
@@ -18,13 +19,13 @@ from keras.datasets import cifar10
 #Untaring file...
 
 #%%
-from matplotlib import pyplot
-from scipy.misc import toimage
+#from matplotlib import pyplot
+#from scipy.misc import toimage
 #%%
-for i in range(0, 9):
-	pyplot.subplot(330 + 1 + i)
-	pyplot.imshow(toimage(X_train[i]))
-pyplot.show()
+#for i in range(0, 9):
+#	pyplot.subplot(330 + 1 + i)
+#	pyplot.imshow(toimage(X_train[i]))
+#pyplot.show()
 
 import numpy
 #print(X_train.shape)
@@ -76,8 +77,8 @@ model.add(Dropout(0.5))
 model.add(Dense(num_classes, activation='softmax'))
 
 #%%
-#epochs = 25
-epochs = 5
+#epochs = 5
+epochs = 25
 lrate = 0.01
 decay = lrate/epochs
 sgd = SGD(lr=lrate, momentum=0.9, decay=decay, nesterov=False)
@@ -102,19 +103,19 @@ print("Accuracy: %.2f%%" % (scores[1]*100))
 
 #%%
 # save the model
-model_json = model.to_json()
-with open('cifar10-model.json','w') as json_file:
-        json_file.write(model_json)
+#model_json = model.to_json()
+#with open('cifar10-model.json','w') as json_file:
+#        json_file.write(model_json)
 
-model.save_weights('cifar10-model.h5')
+#model.save_weights('cifar10-model.h5')
 
 #%%
 # load the model
-from keras.models import model_from_json
-with open('cifar10-model.json','r') as json_file:
-        loaded_model_json = json_file.read()
-loaded_model = model_from_json(loaded_model_json)
-loaded_model.load_weights('cifar10-model.h5')
-loaded_model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
-score = loaded_model.evaluate(X_test, y_test, verbose=0)
-print("%s: %.2f%%" % (loaded_model.metrics_names[1], score[1]*100))
+#from keras.models import model_from_json
+#with open('cifar10-model.json','r') as json_file:
+#        loaded_model_json = json_file.read()
+#loaded_model = model_from_json(loaded_model_json)
+#loaded_model.load_weights('cifar10-model.h5')
+#loaded_model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
+#score = loaded_model.evaluate(X_test, y_test, verbose=0)
+#print("%s: %.2f%%" % (loaded_model.metrics_names[1], score[1]*100))
