@@ -1,12 +1,11 @@
-# -*- coding: utf-8 -*-
 """
 Version 20170125 by Jian: follow the tutorial
 http://machinelearningmastery.com/machine-learning-in-python-step-by-step/
 
 
-Version 20170127 by Jian: test on rescomp 
+Version 20170127 by Jian: test on server
 ImportError: cannot import name model_selection
-result:
+due to
 >>> sklearn.__version__
 '0.15.2'
 
@@ -14,7 +13,26 @@ Version 20170128 by Jian: test on home laptop
 Version 20170212 by Jian: use keras for iris
 Version 20170220 by Jian: recap, revisit keras, *packaging
 Version 20170304 by Jian: review CV
+Version 20170317 by Jian: test multiple gpu
 """
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # LOCAL only: on server
 import os
 import sys
@@ -51,8 +69,40 @@ encoded_Y = encoder.transform(Y)
 from keras.utils import np_utils
 dummy_y = np_utils.to_categorical(encoded_Y)
 
+
+
+
+
+
 from keras.models import Sequential
 from keras.layers import Dense
+
+#################################################################################################################
+# ref https://github.com/fchollet/keras/issues/2436
+# for multi-gpu training
+import tensorflow as tf
+from keras import backend as K
+from keras.models import Model
+from keras.layers import Input, merge
+from keras.layers.core import Lambda
+
+def slice_batch(x, n_gpus, part):
+	sh = K.shape(x)
+	L = sh[0] / n_gpus
+	if part == n_gpus - 1:
+		return x[part*L:]
+	return x[part*L:(part+1)*L]
+def to_multi_gpu(model, n_gpus=2):
+	with tf.device('/cpu:0'):
+		x = Input(model.input_shape[1:])#, name=model.input_names[0])
+	towers = []
+	for g in range(n_gpus):
+		with tf.device('/gpu:' + str(g)):
+			slice_g = Lambda(slice_batch, lambda shape: shape, arguments={'n_gpus':n_gpus, 'part':g})(x) 
+			towers.append(model(slice_g))
+	with tf.device('/cpu:0'):
+		merged = merge(towers, mode='concat', concat_axis=0)
+	return Model(input=[x], output=merged)
 
 # baseline test : multinomial regression
 #model = Sequential()
@@ -66,8 +116,24 @@ def baseline_model():
 	model = Sequential()
 	model.add(Dense(4, input_dim=4, init='normal', activation='relu'))
 	model.add(Dense(3, init='normal', activation='sigmoid'))
-	model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 	return model
+
+
+
+model = to_multi_gpu(baseline_model())
+
+print model.summary()
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.fit(X,dummy_y)
+#################################################################################################################
+quit()
+
+
+
+
+
+
+
 
 
 from keras.wrappers.scikit_learn import KerasClassifier
