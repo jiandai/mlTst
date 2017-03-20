@@ -112,27 +112,22 @@ def to_multi_gpu(model, n_gpus=2):
 #print(model.summary())
 
 
-def baseline_model():
+def baseline_model(n_gpus=2):
 	model = Sequential()
 	model.add(Dense(4, input_dim=4, init='normal', activation='relu'))
 	model.add(Dense(3, init='normal', activation='sigmoid'))
+	#model = to_multi_gpu(model,n_gpus=n_gpus)
+	model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 	return model
 
+K.gpu_setup = ["gup0", "gpu1", "gpu2", "gpu3", "gpu4", "gpu5"]
 
-
-model = to_multi_gpu(baseline_model())
+model = baseline_model(n_gpus=6)
 
 print model.summary()
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(X,dummy_y)
-#################################################################################################################
+model.fit(X,dummy_y,batch_size=5,validation_split=0.1, nb_epoch=20)
 quit()
-
-
-
-
-
-
+#################################################################################################################
 
 
 
