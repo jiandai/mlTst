@@ -13,25 +13,10 @@ Version 20170128 by Jian: test on home laptop
 Version 20170212 by Jian: use keras for iris
 Version 20170220 by Jian: recap, revisit keras, *packaging
 Version 20170304 by Jian: review CV
-Version 20170317 by Jian: test multiple gpu
+Version 20170317 by Jian: test multiple gpu => Not sure whether it works
+Version 20170402 by Jian: rerun without turning on >1 gpu
+Version 20170404 by Jian: rerun turning on >1 gpu
 """
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 # LOCAL only: on server
 import os
@@ -112,11 +97,12 @@ def to_multi_gpu(model, n_gpus=2):
 #print(model.summary())
 
 
-def baseline_model(n_gpus=2):
+def baseline_model(multi_gpu=True,n_gpus=2):
 	model = Sequential()
 	model.add(Dense(4, input_dim=4, init='normal', activation='relu'))
 	model.add(Dense(3, init='normal', activation='sigmoid'))
-	#model = to_multi_gpu(model,n_gpus=n_gpus)
+	if multi_gpu:
+		model = to_multi_gpu(model,n_gpus=n_gpus)
 	model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 	return model
 
@@ -125,7 +111,7 @@ K.gpu_setup = ["gup0", "gpu1", "gpu2", "gpu3", "gpu4", "gpu5"]
 model = baseline_model(n_gpus=6)
 
 print model.summary()
-model.fit(X,dummy_y,batch_size=5,validation_split=0.1, nb_epoch=20)
+model.fit(X,dummy_y,batch_size=5,validation_split=0.1, nb_epoch=20,verbose=1)
 quit()
 #################################################################################################################
 
