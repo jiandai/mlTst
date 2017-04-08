@@ -18,6 +18,36 @@ Version 20170402 by Jian: rerun without turning on >1 gpu
 Version 20170404 by Jian: rerun turning on >1 gpu
 """
 
+
+csv_path='../data/iris.csv'
+import pandas
+df= pandas.read_csv(csv_path,header=None)
+dataset = df.values # return a <class 'numpy.ndarray'> type
+X = dataset[:,0:4].astype(float)
+Y = dataset[:,4]
+from sklearn.preprocessing import LabelEncoder
+encoder = LabelEncoder()
+encoder.fit(Y)
+encoded_Y = encoder.transform(Y)
+# convert integers to dummy variables (i.e. one hot encoded)
+from keras.utils import np_utils
+dummy_y = np_utils.to_categorical(encoded_Y)
+
+from keras.models import Sequential
+from keras.layers import Dense
+# baseline test : multinomial regression
+model = Sequential()
+model.add(Dense(3,input_dim=4,activation='sigmoid'))
+model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
+model.fit(X,dummy_y,nb_epoch=1000)
+print(model.summary())
+print(model.predict(X))
+
+quit()
+
+
+
+
 # LOCAL only: on server
 import os
 import sys
@@ -28,9 +58,7 @@ sys.path.insert(0, os.path.expanduser('~')+'/.local/lib/python2.7/site-packages'
 #
 url='https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data'
 #csv_path='data/iris.csv'
-csv_path='../data/iris.csv'
 
-import pandas
 
 def acquire_data():
 	df= pandas.read_csv(url,header=None)
@@ -38,29 +66,19 @@ def acquire_data():
 
 #acquire_data()
 
-df= pandas.read_csv(csv_path,header=None)
-
-dataset = df.values # return a <class 'numpy.ndarray'> type
-X = dataset[:,0:4].astype(float)
-Y = dataset[:,4]
-
-
-
-from sklearn.preprocessing import LabelEncoder
-encoder = LabelEncoder()
-encoder.fit(Y)
-encoded_Y = encoder.transform(Y)
-# convert integers to dummy variables (i.e. one hot encoded)
-from keras.utils import np_utils
-dummy_y = np_utils.to_categorical(encoded_Y)
 
 
 
 
 
 
-from keras.models import Sequential
-from keras.layers import Dense
+
+
+
+
+
+
+
 
 #################################################################################################################
 # ref https://github.com/fchollet/keras/issues/2436
@@ -89,12 +107,6 @@ def to_multi_gpu(model, n_gpus=2):
 		merged = merge(towers, mode='concat', concat_axis=0)
 	return Model(input=[x], output=merged)
 
-# baseline test : multinomial regression
-#model = Sequential()
-#model.add(Dense(3,input_dim=4,activation='sigmoid'))
-#model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
-#model.fit(X,dummy_y,nb_epoch=100)
-#print(model.summary())
 
 
 def baseline_model(multi_gpu=True,n_gpus=2):
