@@ -37,12 +37,18 @@ from keras.models import Sequential
 from keras.layers import Dense
 # baseline test : multinomial regression
 model = Sequential()
-model.add(Dense(3,input_dim=4,activation='sigmoid'))
+#model.add(Dense(3,input_dim=4,activation='sigmoid'))
+model.add(Dense(3,input_dim=4,activation='softmax'))
 model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
-model.fit(X,dummy_y,nb_epoch=1000)
 print(model.summary())
-print(model.predict(X))
 
+model.fit(X,dummy_y,nb_epoch=1000)
+pred = model.predict(X)
+pred_proba = model.predict_proba(X)
+pred_cls = model.predict_classes(X)
+import numpy as np
+print(np.concatenate((encoded_Y.reshape(150,1),pred_cls.reshape(150,1)),axis=1))
+print(np.sum(pred_proba,axis=1))
 quit()
 
 
@@ -122,7 +128,7 @@ K.gpu_setup = ["gup0", "gpu1", "gpu2", "gpu3", "gpu4", "gpu5"]
 
 model = baseline_model(n_gpus=6)
 
-print model.summary()
+print(model.summary())
 model.fit(X,dummy_y,batch_size=5,validation_split=0.1, nb_epoch=20,verbose=1)
 quit()
 #################################################################################################################
