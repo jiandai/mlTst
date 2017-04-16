@@ -15,14 +15,76 @@ Version 20170212 by Jian: use keras for iris
 Version 20170220 by Jian: recap, revisit keras, *packaging
 Version 20170414.1 by Jian: fork to iris-tf.py for exercise tf
 Version 20170414.2 by Jian: multinomial regression exercise /w iris dataset
+Version 20170415.1 by Jian: ref https://www.tensorflow.org/get_started/tflearn
+Version 20170415.2 by Jian: ref https://www.tensorflow.org/get_started/input_fn for using batch
 
 to-do:
 . multiple gpu from start
 . equivalent W's
 
-. more reading => use batch
 
 """
+
+IRIS_TRAINING = "iris_training.csv"
+IRIS_TRAINING_URL = "http://download.tensorflow.org/data/iris_training.csv"
+
+IRIS_TEST = "iris_test.csv"
+IRIS_TEST_URL = "http://download.tensorflow.org/data/iris_test.csv"
+
+import tensorflow as tf
+import numpy as np
+training_set = tf.contrib.learn.datasets.base.load_csv_with_header(
+    filename=IRIS_TRAINING,
+    target_dtype=np.int,
+    features_dtype=np.float32)
+test_set = tf.contrib.learn.datasets.base.load_csv_with_header(
+    filename=IRIS_TEST,
+    target_dtype=np.int,
+    features_dtype=np.float32)
+
+'''
+print(training_set.data)
+print(training_set.target)
+print(test_set.data)
+print(test_set.target)
+'''
+feature_columns = [tf.contrib.layers.real_valued_column("", dimension=4)]
+classifier = tf.contrib.learn.DNNClassifier(feature_columns=feature_columns,
+    hidden_units=[10, 20, 10],
+    n_classes=3,
+    model_dir="./tmp/")
+
+
+def get_train_inputs():
+    x = tf.constant(training_set.data)
+    y = tf.constant(training_set.target)
+    return x, y
+
+
+classifier.fit(input_fn=get_train_inputs, steps=5000)
+#classifier.fit(x=training_set.data, y=training_set.target, steps=1000)
+
+eval_out = classifier.evaluate(x=test_set.data,y=test_set.target, steps=1)
+#print(dir(eval_out))
+#print(eval_out.keys())
+#dict_keys(['accuracy', 'loss', 'global_step', 'auc'])
+print (eval_out['accuracy'])
+print (eval_out['loss'])
+print (eval_out['auc'])
+
+pred = classifier.predict(input_fn= (lambda : np.array( [[6.4, 3.2, 4.5, 1.5], [5.8, 3.1, 5.0, 1.7]], dtype=np.float32)))
+#print(type(pred)) #<class 'generator'>
+print(list(pred))
+quit()
+
+
+
+
+
+
+
+
+
 
 # Prepare 1-hot dataset 
 csv_path='../data/iris.csv'
@@ -38,7 +100,6 @@ dummy_y = encoder.transform(Y)
 #dummy_y = pandas.get_dummies(df.iloc[:,4]).values
 
 
-import tensorflow as tf
 # inference
 x = tf.placeholder(tf.float32,[None,4])
 W = tf.Variable(tf.zeros([4,3]),tf.float32)
@@ -80,7 +141,6 @@ quit()
 
 
 
-import numpy as np
 
 
 

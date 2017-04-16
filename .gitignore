@@ -5,3 +5,5 @@ local/*
 *.b
 obs/
 obs/*
+tmp
+tmp/*
