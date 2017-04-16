@@ -17,6 +17,13 @@ Version 20170414.1 by Jian: fork to iris-tf.py for exercise tf
 Version 20170414.2 by Jian: multinomial regression exercise /w iris dataset
 Version 20170415.1 by Jian: ref https://www.tensorflow.org/get_started/tflearn
 Version 20170415.2 by Jian: ref https://www.tensorflow.org/get_started/input_fn for using batch
+Version 20170416 by Jian: ref https://www.tensorflow.org/get_started/monitors for logging
+ERRORs:
+tf.contrib.learn.metric_spec.MetricSpec(
+AttributeError: module 'tensorflow.contrib.learn' has no attribute 'metric_spec'
+
+prediction_key=tf.contrib.learn.PredictionKey.CLASSES),
+AttributeError: module 'tensorflow.contrib.learn' has no attribute 'prediction_key'
 
 to-do:
 . multiple gpu from start
@@ -25,6 +32,7 @@ to-do:
 
 """
 
+# User tf source
 IRIS_TRAINING = "iris_training.csv"
 IRIS_TRAINING_URL = "http://download.tensorflow.org/data/iris_training.csv"
 
@@ -32,6 +40,10 @@ IRIS_TEST = "iris_test.csv"
 IRIS_TEST_URL = "http://download.tensorflow.org/data/iris_test.csv"
 
 import tensorflow as tf
+
+#tf.logging.set_verbosity(tf.logging.INFO)
+#With INFO-level logging, tf.contrib.learn automatically outputs training-loss metrics to stderr after every 100 steps.
+
 import numpy as np
 training_set = tf.contrib.learn.datasets.base.load_csv_with_header(
     filename=IRIS_TRAINING,
@@ -48,23 +60,51 @@ print(training_set.target)
 print(test_set.data)
 print(test_set.target)
 '''
+validation_metrics = {
+    "accuracy":
+        tf.contrib.learn.MetricSpec(
+            metric_fn=tf.contrib.metrics.streaming_accuracy,
+            prediction_key=tf.contrib.learn.PredictionKey.CLASSES),
+    "precision":
+        tf.contrib.learn.MetricSpec(
+            metric_fn=tf.contrib.metrics.streaming_precision,
+            prediction_key=tf.contrib.learn.PredictionKey.CLASSES),
+    "recall":
+        tf.contrib.learn.MetricSpec(
+            metric_fn=tf.contrib.metrics.streaming_recall,
+            prediction_key=tf.contrib.learn.PredictionKey.CLASSES)
+}
+
+validation_monitor = tf.contrib.learn.monitors.ValidationMonitor(
+    test_set.data,
+    test_set.target,
+    every_n_steps=50,
+    metrics=validation_metrics)
+
+
 feature_columns = [tf.contrib.layers.real_valued_column("", dimension=4)]
 classifier = tf.contrib.learn.DNNClassifier(feature_columns=feature_columns,
     hidden_units=[10, 20, 10],
     n_classes=3,
-    model_dir="./tmp/")
+    model_dir="./tmp/",
+    config=tf.contrib.learn.RunConfig(save_checkpoints_secs=1))
 
 
 def get_train_inputs():
     x = tf.constant(training_set.data)
     y = tf.constant(training_set.target)
     return x, y
+def get_test_inputs():
+    x = tf.constant(test_set.data)
+    y = tf.constant(test_set.target)
+    return x, y
 
 
-classifier.fit(input_fn=get_train_inputs, steps=5000)
+classifier.fit(input_fn=get_train_inputs, steps=5000,
+        monitors=[validation_monitor])
 #classifier.fit(x=training_set.data, y=training_set.target, steps=1000)
 
-eval_out = classifier.evaluate(x=test_set.data,y=test_set.target, steps=1)
+eval_out = classifier.evaluate(input_fn=get_test_inputs, steps=1)
 #print(dir(eval_out))
 #print(eval_out.keys())
 #dict_keys(['accuracy', 'loss', 'global_step', 'auc'])
@@ -84,7 +124,12 @@ quit()
 
 
 
-
+# Use UCI source
+#url='https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data'
+def acquire_data():
+	df= pandas.read_csv(url,header=None)
+	df.to_csv(csv_path,header=False,index=False)
+#acquire_data()
 
 # Prepare 1-hot dataset 
 csv_path='../data/iris.csv'
@@ -163,16 +208,17 @@ quit()
 #encoder.fit(encoded_Y.reshape(-1,1))
 #print encoder.transform(encoded_Y.reshape(-1,1))
 
-#url='https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data'
-
-def acquire_data():
-	df= pandas.read_csv(url,header=None)
-	df.to_csv(csv_path,header=False,index=False)
-
-#acquire_data()
 
 
 
+
+
+
+
+
+
+
+#### Keras ################################
 
 # convert integers to dummy variables (i.e. one hot encoded)
 from keras.utils import np_utils
