@@ -17,7 +17,7 @@ y = tf.placeholder(tf.int8,[None,3])
 sess = tf.Session()
 
 # Verify 1-hot code works
-#print sess.run([y0,y],{y0:training_labels,y:training_labels_1h})
+#print(sess.run([y0,y],{y0:training_labels,y:training_labels_1h}))
 for b in range(3):
 	btch_x,btch_y = training_dataset.next_batch(7)
-	print b, sess.run([x,y],{x:btch_x,y:btch_y})
+	print(b, sess.run([x,y],{x:btch_x,y:btch_y}))
