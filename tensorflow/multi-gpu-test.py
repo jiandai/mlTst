@@ -1,7 +1,27 @@
 # ver 20170319 by jian
+# ver 20170416 by jian: ref https://www.tensorflow.org/tutorials/using_gpu
+
+c = []
+gpus = [u'/gpu:0', u'/gpu:1', u'/gpu:2', u'/gpu:3', u'/gpu:4']
+import tensorflow as tf
+for d in gpus:
+  with tf.device(d):
+    a = tf.constant([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], shape=[2, 3])
+    b = tf.constant([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], shape=[3, 2])
+    c.append(tf.matmul(a, b))
+with tf.device('/cpu:0'):
+  sum = tf.add_n(c)
+# Creates a session with log_device_placement set to True.
+sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
+# Runs the op.
+print sess.run(sum)
+
+quit()
+
+
+
 # ref to https://github.com/aymericdamien/TensorFlow-Examples/
 import numpy as np
-import tensorflow as tf
 import datetime
 
 # Processing Units logs
