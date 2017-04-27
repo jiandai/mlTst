@@ -28,16 +28,20 @@ y0 = tf.placeholder(tf.int8,[None])
 y = tf.placeholder(tf.float32,[None,3])
 
 ## I-H1
-num1_hidden_nodes = 4
+num1_hidden_nodes = 3
+#num1_hidden_nodes = 500
 W1 = tf.Variable(tf.zeros([4,num1_hidden_nodes],tf.float32))
 b1 = tf.Variable(tf.zeros([1,num1_hidden_nodes],tf.float32))
-h1 = tf.nn.relu(tf.add(tf.matmul(x,W1),b1))
+logits = tf.add(tf.matmul(x,W1),b1)
+'''
+h1 = tf.nn.relu(logits)
 
 ## H1-H2
 num2_hidden_nodes = 3
 W2 = tf.Variable(tf.zeros([num1_hidden_nodes,num2_hidden_nodes],tf.float32))
 b2 = tf.Variable(tf.zeros([1,num2_hidden_nodes],tf.float32))
-h2 = tf.nn.relu(tf.add(tf.matmul(h1,W2),b2))
+logits = tf.add(tf.matmul(h1,W2),b2)
+h2 = tf.nn.relu(logits)
 
 
 
@@ -45,15 +49,16 @@ h2 = tf.nn.relu(tf.add(tf.matmul(h1,W2),b2))
 W3 = tf.Variable(tf.zeros([num2_hidden_nodes,3],tf.float32))
 b3 = tf.Variable(tf.zeros([1,3],tf.float32))
 logits = tf.add(tf.matmul(h2,W3),b3)
-
+'''
 ##
 p = tf.nn.softmax(logits)
 #cross_entropy = tf.reduce_sum(-y*tf.log(p),axis=1)
 cross_entropy = tf.reduce_sum(-y*tf.log(p),reduction_indices=[1]) 
-loss = tf.reduce_mean(cross_entropy)
+loss = tf.reduce_mean(cross_entropy) /tf.log(3.)
+loss_ = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y,logits=logits))/tf.log(3.)
 
 ##
-solver = tf.train.GradientDescentOptimizer(.01)
+solver = tf.train.GradientDescentOptimizer(.8)
 train_op = solver.minimize(loss)
 
 ##
@@ -67,9 +72,16 @@ sess = tf.Session()
 
 #sess.run(tf.global_variables_initializer())
 sess.run(tf.initialize_all_variables())
-for b in range(15000):
-	btch_x,btch_y = training_dataset.next_batch(113)
-	sess.run(train_op,{x:btch_x,y:btch_y})
+for b in range(2000000):
+    btch_x,btch_y = training_dataset.next_batch(119)
+    sess.run(train_op,{x:btch_x,y:btch_y}) 
+    if b % 10000 ==0:
+     tr_loss,tr_acc = sess.run([loss,accuracy],{x:btch_x,y:btch_y})
+     btch_x,btch_y = test_dataset.next_batch(29)
+     tt_loss,tt_acc = sess.run([loss,accuracy],{x:btch_x,y:btch_y})
+     print(b,tr_loss,tt_loss,tr_acc,tt_acc)
 
-btch_x,btch_y = test_dataset.next_batch(29)
-print(sess.run([accuracy],{x:btch_x,y:btch_y}))
+#btch_x,btch_y = training_dataset.next_batch(59)
+#print(sess.run([accuracy],{x:btch_x,y:btch_y}))
+#btch_x,btch_y = test_dataset.next_batch(29)
+#print(sess.run([accuracy],{x:btch_x,y:btch_y}))
