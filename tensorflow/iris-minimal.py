@@ -2,10 +2,14 @@
 # Ver 20170418.1 by Jian: add softmax regression
 # Assume there are iris_test.csv, iris_training.csv
 # Ver 20170418.2 by Jian: add 1-hidden layer
-# Ver 20170426 by Jian: deep dive to multinomial and MLP (tuning weight initialization and learning rate)
+# Ver 20170426.1 by Jian: deep dive to multinomial and 1-hidden layer MLP (tuning weight initialization and learning rate)
+# Ver 20170426.2 by Jian: hard to get 2-hidden layer MLP
+# Ver 20170427 by Jian: => modularize, => search space, => explore the gradient
 
 import pandas as pd
 training_df = pd.read_csv('iris_training.csv',skiprows=1,header=None)
+print(training_df.describe())
+
 training_features = training_df.iloc[:,0:4].values
 training_labels = training_df.iloc[:,4].values
 test_df = pd.read_csv('iris_test.csv',skiprows=1,header=None)
@@ -25,6 +29,17 @@ print(test_dataset.num_examples)
 
 import tensorflow as tf
 
+#lr = .8 # for multinomial
+#lr = .1 # for 1-hidden MLP, 3 hidden nodes (4-3-3)
+lr = .06 # for 2-hidden MLP, 4+4 hidden nodes (4-4-4-3)
+STEPS = 2000000 # => to get good prediction for multinomial reg
+CHECK=10000
+#STEPS = 20
+#CHECK =5
+
+
+
+
 ## I/O layers
 x = tf.placeholder(tf.float32,[None,4])
 y0 = tf.placeholder(tf.int8,[None])
@@ -35,45 +50,39 @@ y = tf.placeholder(tf.float32,[None,3])
 
 
 ## I-H1
-num1_hidden_nodes = 3
+num1_hidden_nodes = 4
 #num1_hidden_nodes = 500
 W1 = tf.Variable(tf.random_normal([4,num1_hidden_nodes],stddev=.4))
+#W1 = tf.Variable(tf.zeros([4,num1_hidden_nodes],tf.float32)) # for ReLU activation, weights cannot be initialized to be zero!
 b1 = tf.Variable(tf.zeros([1,num1_hidden_nodes],tf.float32))
 logits = tf.add(tf.matmul(x,W1),b1)
+
 h1 = tf.nn.relu(logits)
 
 ## H1-H2
-num2_hidden_nodes = 3
-W2 = tf.Variable(tf.zeros([num1_hidden_nodes,num2_hidden_nodes],tf.float32))
+num2_hidden_nodes = 4
+W2 = tf.Variable(tf.random_normal([num1_hidden_nodes,num2_hidden_nodes],stddev=.4))
+#W2 = tf.Variable(tf.zeros([num1_hidden_nodes,num2_hidden_nodes],tf.float32))
 b2 = tf.Variable(tf.zeros([num2_hidden_nodes],tf.float32))
 logits = tf.add(tf.matmul(h1,W2),b2)
-'''
+
 h2 = tf.nn.relu(logits)
 
 
 
 ## H2-O
-W3 = tf.Variable(tf.zeros([num2_hidden_nodes,3],tf.float32))
+W3 = tf.Variable(tf.random_normal([num2_hidden_nodes,3],stddev=.4))
 b3 = tf.Variable(tf.zeros([1,3],tf.float32))
 logits = tf.add(tf.matmul(h2,W3),b3)
-'''
+
 ##
 p = tf.nn.softmax(logits)
 #cross_entropy = tf.reduce_sum(-y*tf.log(p),axis=1)
 cross_entropy = tf.reduce_sum(-y*tf.log(p),reduction_indices=[1]) 
 loss = tf.reduce_mean(cross_entropy) /tf.log(3.)
-loss_ = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y,logits=logits))/tf.log(3.)
+#loss_ = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y,logits=logits))/tf.log(3.)
 
 ##
-
-#lr = .8 # for multinomial
-lr = .1
-STEPS = 2000000 # => to get good prediction for multinomial reg
-CHECK=10000
-#STEPS = 20
-#CHECK =5
-
-
 solver = tf.train.GradientDescentOptimizer(lr)
 train_op = solver.minimize(loss)
 
@@ -82,11 +91,8 @@ accuracy = tf.reduce_mean(tf.cast(tf.equal(tf.argmax(p,1),tf.argmax(y,1)),tf.flo
 
 
 sess = tf.Session()
-# Verify 1-hot code works
-#print(sess.run([y0,y],{y0:training_labels,y:training_labels_1h}))
-#print(sess.run([y0,y],{y0:test_labels,y:test_labels_1h}))
 
-#sess.run(tf.global_variables_initializer())
+#sess.run(tf.global_variables_initializer()) # tf1.x
 sess.run(tf.initialize_all_variables())
 
 
@@ -98,6 +104,9 @@ for b in range(STEPS):
      btch_x,btch_y = test_dataset.next_batch(29)
      tt_loss,tt_acc = sess.run([loss,accuracy],{x:btch_x,y:btch_y})
      print(b,tr_loss,tt_loss,tr_acc,tt_acc)
+
+
+
 
 #btch_x,btch_y = training_dataset.next_batch(59)
 #print(sess.run([accuracy],{x:btch_x,y:btch_y}))
@@ -162,5 +171,24 @@ for b in range(STEPS):
 200000 0.0935188 0.0885033 0.96631 0.96533
 210000 0.0830277 0.0751165 0.97461 0.96533
 220000 0.118095 0.0886395 0.94141 0.96533
+early stopped
+'''
+
+# vs 2-hidden layer MLP
+'''
+0 0.999367 0.999714 0.35303 0.27588
+10000 0.697196 0.774293 0.45386 0.34473
+20000 0.273712 0.297442 0.94141 0.96533
+30000 0.208352 0.234159 0.94971 0.96533
+40000 0.167136 0.165494 0.93262 0.96533
+50000 0.144682 0.142151 0.95801 0.96533
+60000 0.13296 0.111286 0.95801 0.96533
+70000 0.121344 0.111303 0.95801 0.96533
+80000 0.118415 0.105218 0.94971 1.0
+90000 0.711689 0.610822 0.72266 0.79297
+100000 0.103752 0.0804915 0.95801 1.0
+110000 0.101834 0.0856768 0.95801 1.0
+120000 0.119945 0.10984 0.94971 0.96533
+...
 early stopped
 '''
