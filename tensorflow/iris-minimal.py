@@ -5,7 +5,8 @@
 # Ver 20170426.1 by Jian: deep dive to multinomial and 1-hidden layer MLP (tuning weight initialization and learning rate)
 # Ver 20170426.2 by Jian: hard to get 2-hidden layer MLP
 # Ver 20170427 by Jian: modularize
-# to-do: => search space, => explore the gradient
+# Ver 20170428.1 by Jian: more batch parameters to explore the search space
+# to-do: => explore the gradient
 
 # Assume these two csv's 'iris_training.csv', 'iris_test.csv' are in the working dir
 import pandas as pd
@@ -88,7 +89,13 @@ import sys
 {
         '1': lambda : mlp(num_nodes=[4,3],stddevs=[.4,.3],lr=.8),# for multinomial,
         '2': lambda : mlp(num_nodes=[4,3,3],stddevs=[.4,.3,.3],lr=.1), # for 1-hidden MLP, 3 hidden nodes (4-3-3)
-        '3': lambda : mlp(num_nodes=[4,4,4,3],stddevs=[.4,.4,.3,.3],lr=.06) # for 2-hidden MLP, 4+4 hidden nodes (4-4-4-3)
+        '3': lambda : mlp(num_nodes=[4,4,4,3],stddevs=[.4,.4,.3,.3],lr=.05), # for 2-hidden MLP, 4+4 hidden nodes (4-4-4-3), .06 is un-stable
+        '4': lambda : mlp(num_nodes=[4,4,4,3],stddevs=[.4,.4,.3,.3],lr=.04), # for 2-hidden MLP, 4+4 hidden nodes (4-4-4-3)
+        '5': lambda : mlp(num_nodes=[4,4,4,3],stddevs=[.4,.4,.3,.3],lr=.03), # for 2-hidden MLP, 4+4 hidden nodes (4-4-4-3)
+        '6': lambda : mlp(num_nodes=[4,4,4,3],stddevs=[.4,.4,.3,.3],lr=.02), # for 2-hidden MLP, 4+4 hidden nodes (4-4-4-3)
+        '7': lambda : mlp(num_nodes=[4,4,4,3],stddevs=[.4,.4,.3,.3],lr=.01), # for 2-hidden MLP, 4+4 hidden nodes (4-4-4-3)
+        '8': lambda : mlp(num_nodes=[4,4,4,3],stddevs=[.4,.4,.3,.3],lr=.06), # for 2-hidden MLP, 4+4 hidden nodes (4-4-4-3)
+        '9': lambda : mlp(num_nodes=[4,4,4,3],stddevs=[.4,.4,.3,.3],lr=.07), # for 2-hidden MLP, 4+4 hidden nodes (4-4-4-3)
 }[ sys.argv[1] ]() # input should be '1', '2', '3'
 
 
