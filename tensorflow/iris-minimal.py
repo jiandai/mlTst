@@ -4,8 +4,10 @@
 # Ver 20170418.2 by Jian: add 1-hidden layer
 # Ver 20170426.1 by Jian: deep dive to multinomial and 1-hidden layer MLP (tuning weight initialization and learning rate)
 # Ver 20170426.2 by Jian: hard to get 2-hidden layer MLP
-# Ver 20170427 by Jian: => modularize, => search space, => explore the gradient
+# Ver 20170427 by Jian: modularize
+# to-do: => search space, => explore the gradient
 
+# Assume these two csv's 'iris_training.csv', 'iris_test.csv' are in the working dir
 import pandas as pd
 training_df = pd.read_csv('iris_training.csv',skiprows=1,header=None)
 print(training_df.describe())
@@ -27,91 +29,68 @@ print(test_dataset.num_examples)
 
 
 
+
+
+
 import tensorflow as tf
 
-#lr = .8 # for multinomial
-#lr = .1 # for 1-hidden MLP, 3 hidden nodes (4-3-3)
-lr = .06 # for 2-hidden MLP, 4+4 hidden nodes (4-4-4-3)
-STEPS = 2000000 # => to get good prediction for multinomial reg
-CHECK=10000
-#STEPS = 20
-#CHECK =5
+def mlp(num_nodes=[],stddevs=[],lr=.1,steps=2000000,check=10000,tf1=True):
+    # Assertion: tf imported, training_dataset,test_dataset loaded
+    num_layers = len(num_nodes)-1
+    W = []
+    b = []
+    x = []
+    y = []
+    logits = []
+    y_ = tf.placeholder(tf.float32,[None,num_nodes[num_layers]])
+    for l in range(num_layers): 
+        if l==0:
+            x.append(tf.placeholder(tf.float32,[None,num_nodes[l]]))
+        else:
+            x.append(y[l-1])
+        W.append(tf.Variable(tf.random_normal([num_nodes[l],num_nodes[l+1]],stddev=stddevs[l])))
+        b.append(tf.Variable(tf.zeros([num_nodes[l+1]],tf.float32)))
+        logits.append(tf.add(tf.matmul(x[l],W[l]),b[l]))
+        if l+1<num_layers:
+            y.append( tf.nn.relu(logits[l]) )
+        else:
+            y.append( tf.nn.softmax(logits[l]) )
+    loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y_,logits=logits[num_layers-1]))/tf.log(3.)
+    # 
+    #cross_entropy = tf.reduce_sum(-y_*tf.log(y[[num_layers-1]),reduction_indices=[1]) 
+    #loss = tf.reduce_mean(cross_entropy) /tf.log(3.)
+    solver = tf.train.GradientDescentOptimizer(lr)
+    train_op = solver.minimize(loss)
+
+    accuracy = tf.reduce_mean(tf.cast(tf.equal(tf.argmax(y[num_layers-1],1),tf.argmax(y_,1)),tf.float16))
+
+
+    sess = tf.Session()
+    if tf1:
+        sess.run(tf.global_variables_initializer()) # tf1.x
+    else:
+        sess.run(tf.initialize_all_variables())
+
+
+    for b in range(steps):
+        btch_x,btch_y = training_dataset.next_batch(119)
+        sess.run(train_op,{x[0]:btch_x,y_:btch_y}) 
+        if b % check ==0:
+            tr_loss,tr_acc = sess.run([loss,accuracy],{x[0]:btch_x,y_:btch_y})
+            btch_x,btch_y = test_dataset.next_batch(29)
+            tt_loss,tt_acc = sess.run([loss,accuracy],{x[0]:btch_x,y_:btch_y})
+            print(b,tr_loss,tt_loss,tr_acc,tt_acc)
 
 
 
 
-## I/O layers
-x = tf.placeholder(tf.float32,[None,4])
-y0 = tf.placeholder(tf.int8,[None])
-y = tf.placeholder(tf.float32,[None,3])
+import sys
+{
+        '1': lambda : mlp(num_nodes=[4,3],stddevs=[.4,.3],lr=.8,steps=2000,check=50),# for multinomial,
+        '2': lambda : mlp(num_nodes=[4,3,3],stddevs=[.4,.3,.3],lr=.1,steps=300,check=3), # for 1-hidden MLP, 3 hidden nodes (4-3-3)
+        '3': lambda : mlp(num_nodes=[4,4,4,3],stddevs=[.4,.4,.3,.3],lr=.06,steps=1000,check=10) # for 2-hidden MLP, 4+4 hidden nodes (4-4-4-3)
+}[ sys.argv[1] ]() # input should be '1', '2', '3'
 
-
-
-
-
-## I-H1
-num1_hidden_nodes = 4
-#num1_hidden_nodes = 500
-W1 = tf.Variable(tf.random_normal([4,num1_hidden_nodes],stddev=.4))
-#W1 = tf.Variable(tf.zeros([4,num1_hidden_nodes],tf.float32)) # for ReLU activation, weights cannot be initialized to be zero!
-b1 = tf.Variable(tf.zeros([1,num1_hidden_nodes],tf.float32))
-logits = tf.add(tf.matmul(x,W1),b1)
-
-h1 = tf.nn.relu(logits)
-
-## H1-H2
-num2_hidden_nodes = 4
-W2 = tf.Variable(tf.random_normal([num1_hidden_nodes,num2_hidden_nodes],stddev=.4))
-#W2 = tf.Variable(tf.zeros([num1_hidden_nodes,num2_hidden_nodes],tf.float32))
-b2 = tf.Variable(tf.zeros([num2_hidden_nodes],tf.float32))
-logits = tf.add(tf.matmul(h1,W2),b2)
-
-h2 = tf.nn.relu(logits)
-
-
-
-## H2-O
-W3 = tf.Variable(tf.random_normal([num2_hidden_nodes,3],stddev=.4))
-b3 = tf.Variable(tf.zeros([1,3],tf.float32))
-logits = tf.add(tf.matmul(h2,W3),b3)
-
-##
-p = tf.nn.softmax(logits)
-#cross_entropy = tf.reduce_sum(-y*tf.log(p),axis=1)
-cross_entropy = tf.reduce_sum(-y*tf.log(p),reduction_indices=[1]) 
-loss = tf.reduce_mean(cross_entropy) /tf.log(3.)
-#loss_ = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y,logits=logits))/tf.log(3.)
-
-##
-solver = tf.train.GradientDescentOptimizer(lr)
-train_op = solver.minimize(loss)
-
-##
-accuracy = tf.reduce_mean(tf.cast(tf.equal(tf.argmax(p,1),tf.argmax(y,1)),tf.float16))
-
-
-sess = tf.Session()
-
-#sess.run(tf.global_variables_initializer()) # tf1.x
-sess.run(tf.initialize_all_variables())
-
-
-for b in range(STEPS):
-    btch_x,btch_y = training_dataset.next_batch(119)
-    sess.run(train_op,{x:btch_x,y:btch_y}) 
-    if b % CHECK==0:
-     tr_loss,tr_acc = sess.run([loss,accuracy],{x:btch_x,y:btch_y})
-     btch_x,btch_y = test_dataset.next_batch(29)
-     tt_loss,tt_acc = sess.run([loss,accuracy],{x:btch_x,y:btch_y})
-     print(b,tr_loss,tt_loss,tr_acc,tt_acc)
-
-
-
-
-#btch_x,btch_y = training_dataset.next_batch(59)
-#print(sess.run([accuracy],{x:btch_x,y:btch_y}))
-#btch_x,btch_y = test_dataset.next_batch(29)
-#print(sess.run([accuracy],{x:btch_x,y:btch_y}))
 
 # Last a few steps to train the multinomial model
 '''
