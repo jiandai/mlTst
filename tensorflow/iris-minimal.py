@@ -34,7 +34,7 @@ print(test_dataset.num_examples)
 
 import tensorflow as tf
 
-def mlp(num_nodes=[],stddevs=[],lr=.1,steps=2000000,check=10000,tf1=True):
+def mlp(num_nodes=[],stddevs=[],lr=.1,steps=2000000,check=10000):
     # Assertion: tf imported, training_dataset,test_dataset loaded
     num_layers = len(num_nodes)-1
     W = []
@@ -66,7 +66,7 @@ def mlp(num_nodes=[],stddevs=[],lr=.1,steps=2000000,check=10000,tf1=True):
 
 
     sess = tf.Session()
-    if tf1:
+    if tf.__version__ == '1.0.1':
         sess.run(tf.global_variables_initializer()) # tf1.x
     else:
         sess.run(tf.initialize_all_variables())
