@@ -86,9 +86,9 @@ def mlp(num_nodes=[],stddevs=[],lr=.1,steps=2000000,check=10000):
 
 import sys
 {
-        '1': lambda : mlp(num_nodes=[4,3],stddevs=[.4,.3],lr=.8,steps=2000,check=50),# for multinomial,
-        '2': lambda : mlp(num_nodes=[4,3,3],stddevs=[.4,.3,.3],lr=.1,steps=300,check=3), # for 1-hidden MLP, 3 hidden nodes (4-3-3)
-        '3': lambda : mlp(num_nodes=[4,4,4,3],stddevs=[.4,.4,.3,.3],lr=.06,steps=1000,check=10) # for 2-hidden MLP, 4+4 hidden nodes (4-4-4-3)
+        '1': lambda : mlp(num_nodes=[4,3],stddevs=[.4,.3],lr=.8),# for multinomial,
+        '2': lambda : mlp(num_nodes=[4,3,3],stddevs=[.4,.3,.3],lr=.1), # for 1-hidden MLP, 3 hidden nodes (4-3-3)
+        '3': lambda : mlp(num_nodes=[4,4,4,3],stddevs=[.4,.4,.3,.3],lr=.06) # for 2-hidden MLP, 4+4 hidden nodes (4-4-4-3)
 }[ sys.argv[1] ]() # input should be '1', '2', '3'
 
 
