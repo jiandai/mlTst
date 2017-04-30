@@ -1,14 +1,18 @@
 # Ver 20170417 by Jian: hack mnist tutorial data pipe for iris, exercise on data feeding
 # Ver 20170418.1 by Jian: add softmax regression
-# Assume there are iris_test.csv, iris_training.csv
 # Ver 20170418.2 by Jian: add 1-hidden layer
 # Ver 20170426.1 by Jian: deep dive to multinomial and 1-hidden layer MLP (tuning weight initialization and learning rate)
 # Ver 20170426.2 by Jian: hard to get 2-hidden layer MLP
 # Ver 20170427 by Jian: modularize
 # Ver 20170428.1 by Jian: more batch parameters to explore the search space
-# to-do: => explore the gradient
-
+# Ver 20170429.1 by Jian: explore the gradient
 # Assume these two csv's 'iris_training.csv', 'iris_test.csv' are in the working dir
+# Otherwise download from 
+# http://download.tensorflow.org/data/iris_training.csv
+# http://download.tensorflow.org/data/iris_test.csv
+# in R, use "read.csv('iris_training.csv',skip=1,header=FALSE)"
+# ref https://www.tensorflow.org/get_started/tflearn for the source
+# Ver 20170429.2 by Jian: move portion of code to ipynb
 import pandas as pd
 training_df = pd.read_csv('iris_training.csv',skiprows=1,header=None)
 print(training_df.describe())

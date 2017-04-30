@@ -7,3 +7,5 @@ obs/
 obs/*
 tmp
 tmp/*
+.ipynb_checkpoints
+.ipynb_checkpoints/*
