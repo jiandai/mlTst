@@ -16,12 +16,36 @@ Version 20170304 by Jian: review CV
 Version 20170317 by Jian: test multiple gpu => Not sure whether it works
 Version 20170402 by Jian: rerun without turning on >1 gpu
 Version 20170404 by Jian: rerun turning on >1 gpu
+Version 20170430 by Jian: revamp
 """
 
 
+
+
+
+#
+url='https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data'
+#csv_path='data/iris.csv'
 csv_path='../data/iris.csv'
+
+
 import pandas
+
+def acquire_data():
+	df= pandas.read_csv(url,header=None)
+	df.to_csv(csv_path,header=False,index=False)
+
+#acquire_data()
+
+
+
 df= pandas.read_csv(csv_path,header=None)
+
+print(df.head())
+quit()
+
+
+
 dataset = df.values # return a <class 'numpy.ndarray'> type
 X = dataset[:,0:4].astype(float)
 Y = dataset[:,4]
@@ -60,17 +84,6 @@ import sys
 # force to use local packages, in particular, sklearn
 sys.path.insert(0, os.path.expanduser('~')+'/.local/lib/python2.7/site-packages')
 
-
-#
-url='https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data'
-#csv_path='data/iris.csv'
-
-
-def acquire_data():
-	df= pandas.read_csv(url,header=None)
-	df.to_csv(csv_path,header=False,index=False)
-
-#acquire_data()
 
 
 
