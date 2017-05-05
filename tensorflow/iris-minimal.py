@@ -13,6 +13,8 @@
 # in R, use "read.csv('iris_training.csv',skip=1,header=FALSE)"
 # ref https://www.tensorflow.org/get_started/tflearn for the source
 # Ver 20170429.2 by Jian: move portion of code to ipynb
+# Ver 20170430 by Jian: minor change to illustrate LSF array
+
 import pandas as pd
 training_df = pd.read_csv('iris_training.csv',skiprows=1,header=None)
 print(training_df.describe())
@@ -34,12 +36,13 @@ print(test_dataset.num_examples)
 
 
 
-
+STEPS = 2000000
+CHECK = 10000
 
 
 import tensorflow as tf
 
-def mlp(num_nodes=[],stddevs=[],lr=.1,steps=2000000,check=10000):
+def mlp(num_nodes=[],stddevs=[],lr=.1,steps=100,check=10):
     # Assertion: tf imported, training_dataset,test_dataset loaded
     num_layers = len(num_nodes)-1
     W = []
@@ -93,14 +96,14 @@ import sys
 {
         '1': lambda : mlp(num_nodes=[4,3],stddevs=[.4,.3],lr=.8),# for multinomial,
         '2': lambda : mlp(num_nodes=[4,3,3],stddevs=[.4,.3,.3],lr=.1), # for 1-hidden MLP, 3 hidden nodes (4-3-3)
-        '3': lambda : mlp(num_nodes=[4,4,4,3],stddevs=[.4,.4,.3,.3],lr=.05), # for 2-hidden MLP, 4+4 hidden nodes (4-4-4-3), .06 is un-stable
+        '3': lambda : mlp(num_nodes=[4,4,4,3],stddevs=[.4,.4,.3,.3],lr=.05), # for 2-hidden MLP, 4+4 hidden nodes (4-4-4-3) .06 is un-stable
         '4': lambda : mlp(num_nodes=[4,4,4,3],stddevs=[.4,.4,.3,.3],lr=.04), # for 2-hidden MLP, 4+4 hidden nodes (4-4-4-3)
         '5': lambda : mlp(num_nodes=[4,4,4,3],stddevs=[.4,.4,.3,.3],lr=.03), # for 2-hidden MLP, 4+4 hidden nodes (4-4-4-3)
         '6': lambda : mlp(num_nodes=[4,4,4,3],stddevs=[.4,.4,.3,.3],lr=.02), # for 2-hidden MLP, 4+4 hidden nodes (4-4-4-3)
         '7': lambda : mlp(num_nodes=[4,4,4,3],stddevs=[.4,.4,.3,.3],lr=.01), # for 2-hidden MLP, 4+4 hidden nodes (4-4-4-3)
         '8': lambda : mlp(num_nodes=[4,4,4,3],stddevs=[.4,.4,.3,.3],lr=.06), # for 2-hidden MLP, 4+4 hidden nodes (4-4-4-3)
         '9': lambda : mlp(num_nodes=[4,4,4,3],stddevs=[.4,.4,.3,.3],lr=.07), # for 2-hidden MLP, 4+4 hidden nodes (4-4-4-3)
-}[ sys.argv[1] ]() # input should be '1', '2', '3'
+}[ sys.argv[1] ]() # input should be '1', '2', '3', etc
 
 
 # Last a few steps to train the multinomial model
