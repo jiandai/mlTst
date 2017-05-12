@@ -25,15 +25,15 @@
   - [dl4j](https://deeplearning4j.org/),
 
 
-- Model architecture
+- Model architecture (link to [keras application](https://keras.io/applications/) if there is one)
 
   - LeNet
   - AlexNet
-  - VGGNet
+  - [VGG16](https://keras.io/applications/#vgg16), [VGG19](https://keras.io/applications/#vgg19)
   - GoogLeNet
-  - Inception
-  - Xception
-  - ResNet
+  - [Inception](https://keras.io/applications/#inceptionv3)
+  - [Xception](https://keras.io/applications/#xception)
+  - [ResNet](https://keras.io/applications/#resnet50)
 
 - Special purposed architecture
 
