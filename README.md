@@ -52,4 +52,4 @@
   - Optimization (a lot)  
   - Batch normalization
   - Data augmentation ([my tutorial](https://github.com/jiandai/mlTst/blob/master/keras/image-data-augmentation-by-keras.ipynb))
-  - Feature extraction using pretained weight ([my tutorial](https://github.com/jiandai/mlTst/blob/master/keras/DL-features.ipynb)
+  - Feature extraction using pretained weight ([my tutorial](https://github.com/jiandai/mlTst/blob/master/keras/DL-features.ipynb))
