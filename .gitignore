@@ -9,3 +9,4 @@ tmp
 tmp/*
 .ipynb_checkpoints
 .ipynb_checkpoints/*
+tensorflow/tmp*
