@@ -42,8 +42,14 @@
   - E-net
 
 - Building blocks
-  - densely connected layer
+  - densely connected layer ([my tutorial](https://github.com/jiandai/mlTst/blob/master/tensorflow/ann101.ipynb))
   - locally connected layer
-  - convolutional layer
+  - convolutional layer ([my tutorial](https://github.com/jiandai/mlTst/blob/master/semeion.ipynb))
   - pooling layer
   - dropout layer
+
+- Techniques
+  - Optimization (a lot)  
+  - Batch normalization
+  - Data augmentation ([my tutorial](https://github.com/jiandai/mlTst/blob/master/keras/image-data-augmentation-by-keras.ipynb))
+  - Feature extraction using pretained weight ([my tutorial](https://github.com/jiandai/mlTst/blob/master/keras/DL-features.ipynb)
