@@ -51,7 +51,7 @@
 - Techniques
   - Optimization (a lot)  
   - Batch normalization
-  - Data augmentation ([my tutorial](https://github.com/jiandai/mlTst/blob/master/keras/image-data-augmentation-by-keras.ipynb))
+  - Data augmentation ([my tutorial](https://github.com/jiandai/mlTst/blob/master/keras/image-data-augmentation-by-keras.ipynb), [my tutorial using MNIST](https://github.com/jiandai/mnist/blob/master/image-data-augmentation-by-keras.ipynb))
   - Feature extraction using pretained weight ([my tutorial: VGG and Xception](https://github.com/jiandai/mlTst/blob/master/keras/DL-features.ipynb))
   - Transfer learning ([my tutorial: predict dogs-vs-cats using ImageNet-trained Xception net](https://github.com/jiandai/dogs-vs-cats/blob/master/dogs-vs-cats-ex.ipynb))
   - Visualization computational graph and training process ([my tutorial: visualize computational graph](https://github.com/jiandai/mlTst/blob/master/tensorflow/tensorboard-101.ipynb), [my tutorial: training and validation loss monitoring](https://github.com/jiandai/mlTst/blob/master/tensorflow/mnist-with-2-conv-layer-vis-in-tensorboard.ipynb))
