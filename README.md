@@ -44,7 +44,7 @@
 - Building blocks
   - densely connected layer ([my tutorial: ann101](https://github.com/jiandai/mlTst/blob/master/tensorflow/ann101.ipynb))
   - locally connected layer
-  - convolutional layer ([my tutorial: cnn from scratch](https://github.com/jiandai/mlTst/blob/master/semeion.ipynb))
+  - convolutional layer ([my tutorial: cnn from scratch](https://github.com/jiandai/mlTst/blob/master/semeion.ipynb), [my tutorial: minimal cnn for MNIST](https://github.com/jiandai/mnist/blob/master/kaggle-mnist-tst-0-1.ipynb))
   - pooling layer
   - dropout layer
 
