@@ -9,12 +9,17 @@ ref:
     https://github.com/fchollet/keras/blob/master/examples/cifar10_cnn.py
 ver 20170308 by jian: to run on server /w 5 and 25 epoches
 ver 20180204 by jian: recap, tensorboard
+note: 
+to use newer version of tb on the server: 
+python3 /gne/home/daij12/.local/lib/python3.6/site-packages/tensorflow/tensorboard/tensorboard.py --logdir log/
+to-do:
+embedding layer in tf/keras, and embeding visualization
 """
 
 
 # Constant
 seed=7
-epochs = 20
+epochs = 20000
 #epochs = 25
 lrate = 0.01
 decay = lrate/epochs
@@ -116,7 +121,7 @@ model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy
 print(model.summary())
 
 
-tb = TensorBoard(log_dir='./log/', histogram_freq=1, write_graph=True, write_images=True, ) # batch_size=32, write_grads=True, embeddings_freq=1, embeddings_layer_names=[], embeddings_metadata=None)
+tb = TensorBoard(log_dir='./log/', histogram_freq=1, write_graph=True, write_images=True, batch_size=32, write_grads=True,embeddings_freq=1, embeddings_layer_names=None, embeddings_metadata=None)
 """
 v 2.0.2 interface in "C:\Anaconda3\lib\site-packages\keras\callbacks.py":
 self.log_dir = log_dir
@@ -128,7 +133,7 @@ self.write_images = write_images
 
 
 
-model.fit(X_train, y_train, validation_data=(X_test, y_test), nb_epoch=epochs, batch_size=32,) # callbacks=[tb], )
+model.fit(X_train, y_train, validation_data=(X_test, y_test), nb_epoch=epochs, batch_size=32, callbacks=[tb], )
 #AssertionError: AbstractConv2d Theano optimization failed: there is no implementation available supporting the requested options. Did you exclude both "conv_dnn" and "conv_gemm" from the optimizer? If on GPU, is cuDNN available and does the GPU support it? If on CPU, do you have a BLAS library installed Theano can link against?
 # 9:05am--12:47pm
 

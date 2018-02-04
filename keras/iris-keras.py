@@ -17,6 +17,7 @@ Version 20170317 by Jian: test multiple gpu => Not sure whether it works
 Version 20170402 by Jian: rerun without turning on >1 gpu
 Version 20170404 by Jian: rerun turning on >1 gpu
 Version 20170430 by Jian: revamp
+Version 20170719 by Jian: revamp multi gpu
 """
 
 
@@ -42,7 +43,6 @@ def acquire_data():
 df= pandas.read_csv(csv_path,header=None)
 
 print(df.head())
-quit()
 
 
 
@@ -59,20 +59,70 @@ dummy_y = np_utils.to_categorical(encoded_Y)
 
 from keras.models import Sequential
 from keras.layers import Dense
+
 # baseline test : multinomial regression
 model = Sequential()
 #model.add(Dense(3,input_dim=4,activation='sigmoid'))
 model.add(Dense(3,input_dim=4,activation='softmax'))
+
+#################################################################################################################
+from tensorflow.python.client import device_lib
+
+def get_available_gpus():
+    local_device_protos = device_lib.list_local_devices()
+    #return [x.name for x in local_device_protos if x.device_type == 'GPU']
+    return [(x.name,x.device_type) for x in local_device_protos]
+
+print(get_available_gpus())
+
+
+
+# ref https://github.com/fchollet/keras/issues/2436
+# Minimal multi-gpu training by data paralellism
+import tensorflow as tf
+from keras import backend as K
+from keras.models import Model
+from keras.layers import Input, concatenate
+from keras.layers.core import Lambda
+
+def slice_batch(x, n_gpus, part):
+	sh = K.shape(x)
+	L = sh[0] // n_gpus
+	if part == n_gpus - 1:
+		return x[part*L:]
+	return x[part*L:(part+1)*L]
+def to_multi_gpu(model, n_gpus=2):
+	with tf.device('/cpu:0'):
+		x = Input(model.input_shape[1:])#, name=model.input_names[0])
+	towers = []
+	for g in range(n_gpus):
+		print('/gpu:' + str(g))
+		with tf.device('/gpu:' + str(g)):
+			slice_g = Lambda(slice_batch,  arguments={'n_gpus':n_gpus, 'part':g})(x) 
+			towers.append(model(slice_g))
+	with tf.device('/cpu:0'):
+		merged = concatenate(towers, axis=0)
+	return Model(inputs=[x], outputs=merged)
+
+#################################################################################################################
+#K.gpu_setup = ["gup0", "gpu1"]
+
+model = to_multi_gpu(model,n_gpus=2)
+
+
 model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
 print(model.summary())
 
-model.fit(X,dummy_y,nb_epoch=1000)
-pred = model.predict(X)
-pred_proba = model.predict_proba(X)
-pred_cls = model.predict_classes(X)
-import numpy as np
-print(np.concatenate((encoded_Y.reshape(150,1),pred_cls.reshape(150,1)),axis=1))
-print(np.sum(pred_proba,axis=1))
+model.fit(X,dummy_y,epochs=10)
+#pred = model.predict(X)
+#print(pred)
+
+
+#pred_prob = model.predict_prob(X)
+#pred_cls = model.predict_classes(X)
+#import numpy as np
+#print(np.concatenate((encoded_Y.reshape(150,1),pred_cls.reshape(150,1)),axis=1))
+#print(np.sum(pred_proba,axis=1))
 quit()
 
 
@@ -99,52 +149,6 @@ sys.path.insert(0, os.path.expanduser('~')+'/.local/lib/python2.7/site-packages'
 
 
 
-#################################################################################################################
-# ref https://github.com/fchollet/keras/issues/2436
-# for multi-gpu training
-import tensorflow as tf
-from keras import backend as K
-from keras.models import Model
-from keras.layers import Input, merge
-from keras.layers.core import Lambda
-
-def slice_batch(x, n_gpus, part):
-	sh = K.shape(x)
-	L = sh[0] / n_gpus
-	if part == n_gpus - 1:
-		return x[part*L:]
-	return x[part*L:(part+1)*L]
-def to_multi_gpu(model, n_gpus=2):
-	with tf.device('/cpu:0'):
-		x = Input(model.input_shape[1:])#, name=model.input_names[0])
-	towers = []
-	for g in range(n_gpus):
-		with tf.device('/gpu:' + str(g)):
-			slice_g = Lambda(slice_batch, lambda shape: shape, arguments={'n_gpus':n_gpus, 'part':g})(x) 
-			towers.append(model(slice_g))
-	with tf.device('/cpu:0'):
-		merged = merge(towers, mode='concat', concat_axis=0)
-	return Model(input=[x], output=merged)
-
-
-
-def baseline_model(multi_gpu=True,n_gpus=2):
-	model = Sequential()
-	model.add(Dense(4, input_dim=4, init='normal', activation='relu'))
-	model.add(Dense(3, init='normal', activation='sigmoid'))
-	if multi_gpu:
-		model = to_multi_gpu(model,n_gpus=n_gpus)
-	model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-	return model
-
-K.gpu_setup = ["gup0", "gpu1", "gpu2", "gpu3", "gpu4", "gpu5"]
-
-model = baseline_model(n_gpus=6)
-
-print(model.summary())
-model.fit(X,dummy_y,batch_size=5,validation_split=0.1, nb_epoch=20,verbose=1)
-quit()
-#################################################################################################################
 
 
 
