@@ -8,6 +8,7 @@ ref:
     http://machinelearningmastery.com/object-recognition-convolutional-neural-networks-keras-deep-learning-library/
     https://github.com/fchollet/keras/blob/master/examples/cifar10_cnn.py
 ver 20170308 by jian: to run on server /w 5 and 25 epoches
+ver 20180204 by jian: recap
 """
 
 #%%
