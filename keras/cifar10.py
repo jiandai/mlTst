@@ -113,15 +113,22 @@ model.add(Convolution2D(32, 3, 3, activation='relu', border_mode='same', W_const
 model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Flatten())
 model.add(Dense(512, activation='relu', W_constraint=maxnorm(3)))
+
 model.add(Dropout(0.5))
 model.add(Dense(num_classes, activation='softmax'))
+
+# https://stackoverflow.com/questions/45265436/keras-save-image-embedding-of-the-mnist-data-set
+embedding_layer_names = set(layer.name
+                            for layer in model.layers
+                            if layer.name.startswith('dense_'))
+
 
 sgd = SGD(lr=lrate, momentum=0.9, decay=decay, nesterov=False)
 model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
 print(model.summary())
 
-
-tb = TensorBoard(log_dir='./log/', histogram_freq=1, write_graph=True, write_images=True, batch_size=32, write_grads=True,embeddings_freq=1, embeddings_layer_names=None, embeddings_metadata=None)
+tb = TensorBoard(log_dir='./log/', histogram_freq=10, write_graph=True, write_images=True, batch_size=32, write_grads=True,
+	embeddings_freq=10, embeddings_layer_names=embedding_layer_names, embeddings_metadata=None)
 """
 v 2.0.2 interface in "C:\Anaconda3\lib\site-packages\keras\callbacks.py":
 self.log_dir = log_dir
