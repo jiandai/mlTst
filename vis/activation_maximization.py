@@ -17,7 +17,7 @@ print(model.summary())
 #K.set_learning_phase(0)
 
 
-from vis.visualization import visualize_activation_with_losses, visualize_activation
+from vis.visualization import visualize_activation #,visualize_activation_with_losses
 from vis.losses import ActivationMaximization
 from vis.regularizers import TotalVariation, LPNorm
 

@@ -2,12 +2,13 @@
 # ver 20170214 by jian: benchmark on rescomp, cpu vs gpu
 # ref http://deeplearning.net/software/theano/tutorial/using_gpu.html
 # ref http://deeplearning.net/software/theano/library/config.html
+# ver 20180219 by jian: review for stat presentation
 from theano import function, config, shared, tensor, sandbox
 import numpy
 import time
 
 vlen = 10 * 30 * 768  # 10 x #cores x # threads per core
-iters = 1000
+iters = 2 #1000
 
 rng = numpy.random.RandomState(22)
 x = shared(numpy.asarray(rng.rand(vlen), config.floatX))
@@ -17,6 +18,7 @@ t0 = time.time()
 for i in range(iters):
     r = f()
 t1 = time.time()
+
 print("Looping %d times took %f seconds" % (iters, t1 - t0))
 print("Result is %s" % (r,))
 if numpy.any([isinstance(x.op, tensor.Elemwise) and
@@ -25,6 +27,11 @@ if numpy.any([isinstance(x.op, tensor.Elemwise) and
     print('Used the cpu')
 else:
     print('Used the gpu')
+
+
+
+
+
 
 # My result:
 # laptop
