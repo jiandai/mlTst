@@ -1,4 +1,4 @@
-""" This script trains a Lenet-like cnn to predict on UCI Semeion dataset
+""" Purpose: train a LeNet-like cnn to predict on UCI Semeion dataset (1593 handwritten digits in bitmap format)
 
 Summary:
 - Minimal/partial (re)implementation of nn.Module and nn.optim in pytorch
@@ -7,17 +7,14 @@ Summary:
 
 Version and authors:
 - 20180617 by Jian: 
- -- code lenet from bottom up
+ -- code generic lenet class from bottom up
  -- build data pipe including training/validation split
- -- implement ``to``method and train on gpu
+ -- implement ``.to(device)``method and train on gpu
 
 To-do:
-- code minibatch /w size>1
-- code cross entropy
-- optimization gpu run
+- code cross entropy (for now, use a simple MSE loss)
 
 Issue:
-- currently gpu does not perform better than cpu (?)
 
 Note:
 - effect of max pool by 2 on odd dimension is to floor the quotient
@@ -40,10 +37,10 @@ class Lenet:
   """
   def __init__(self, input_size,ch, ks, pl,nu, debug=False):
     """
-      ch: number of conv2d channels
-      ks: kernal size of conv2d (use square kernel only)
-      pl: 2d pooling size
-      nu: number of fn units
+      ch: list of numbers of conv2d channel
+      ks: list of kernal sizes of conv2d (use square kernel only)
+      pl: list of 2d pooling sizes
+      nu: list of numbers of fn unit
     """
     self.num_of_conv_layers = len(ks)
     assert len(ch) ==self.num_of_conv_layers+1
@@ -59,7 +56,7 @@ class Lenet:
       if debug: print("r=", r, ", c=",c)
       layers.append(layer)
     self.dim_to_flatten = r*c*ch[-1]
-    if debug: print("~~~~~~~~~~~~~~~~~~ Flatten (", r, ",", c, ",", ch[-1], ") to ", self.dim_to_flatten, " nodes")
+    if debug: print("~~~ Flatten (", r, ",", c, ",", ch[-1], ") to ", self.dim_to_flatten, " nodes")
     self.num_of_fn_layers = len(nu)
     nu = [self.dim_to_flatten] + nu
     for j, fd in enumerate(zip(nu[:self.num_of_fn_layers], nu[1:])):
@@ -118,9 +115,9 @@ class Optim:
 
 
 # Program logic
-#device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-device = 'cpu'
 ## set up
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
 net = Lenet(input_size= (16, 16),ch=[1,16,32], ks=[3] * 2, pl=[2] * 2,nu=[64,32, 10], debug=False)
 net.to(device)
 
@@ -129,9 +126,12 @@ criterion = nn.MSELoss()
 #criterion = nn.CrossEntropyLoss()
 optimizer = Optim(net, learning_rate = .1)
 
-n_iter = 70000 
-split = .8
+batch_size = 32
+n_batch = 70000
+n_iter = n_batch * batch_size
 validation_freq = 1000
+
+split = .8
 
 # Data pipe
 df = pd.read_csv('https://archive.ics.uci.edu/ml/machine-learning-databases/semeion/semeion.data', delim_whitespace=True, header=None)
@@ -147,6 +147,8 @@ X = X.astype(np.float32)
 Y = Y.astype(np.float32)
 X = X.reshape( (X.shape[0], 1, 16,16) )
 X, Y = torch.from_numpy(X), torch.from_numpy(Y)
+X = X.to(device)
+Y = Y.to(device)
 
 training_size=round(N * split)
 validation_size = N - training_size
@@ -155,24 +157,19 @@ training_X, training_Y = X[:training_size], Y[:training_size]
 validation_X, validation_Y = X[training_size:], Y[training_size:]
 
 
+
+# use the random access instead of shuffling
 sample_idx = np.random.choice( np.arange(training_size), n_iter)
-# minibatch size = 1
-for i in range(n_iter): 
-  start_time = time.time()
-  idx = sample_idx[i] 
+start_time = time.time()
+for i in range(n_batch): 
+  idx = sample_idx[i*batch_size: (i+1)*batch_size] 
   # clear grad buffer
   optimizer.zero_grad()
   
   # generate model input
-  y = training_Y[idx].unsqueeze(0)
-  x = training_X[idx].unsqueeze(0)
-  x = x.to(device)
-  y = y.to(device)
-
-  # compute model output
+  y = training_Y[idx]
+  x = training_X[idx]
   yhat = net.forward(x)
-
-  # compute loss
   loss = criterion(yhat, y)
 
   # compute grad of loss w.r.t. par
@@ -185,17 +182,12 @@ for i in range(n_iter):
   # validation
   with torch.no_grad():
     if (i+1) % validation_freq== 0:
-      val_loss = 0
-      for j in range(validation_size):
-        x = validation_X[j].unsqueeze(0)
-        y = validation_Y[j].unsqueeze(0)
-        x = x.to(device)
-        y = y.to(device)
-        yhat = net.forward(x)
-        val_loss += criterion(yhat, y)
-      val_loss /= validation_size
+      x, y = validation_X, validation_Y
+      yhat = net.forward(x)
+      val_loss = criterion(yhat, y)
       elapsed_time = time.time() - start_time
-      print('[{0:8d}] : training loss = [{1: .6f}], validation loss = [{2: .6f}], epoch duration = [{3: .3f}] sec'.format(i+1, loss.data.item(), val_loss.data.item(), elapsed_time))
+      print('[{0:8d}] : training loss = [{1: .6f}], validation loss = [{2: .6f}], epoch duration = [{3: .3f}] sec, running on [{4}]'.format(i+1, loss.data.item(), val_loss.data.item(), elapsed_time, device))
+      start_time = time.time()
 
 
 
