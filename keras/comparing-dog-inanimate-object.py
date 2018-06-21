@@ -3,14 +3,14 @@ Use pretrained Deep Learning model to classify images on https://www.awesomeinve
 ref: https://github.com/jiandai/mlTst/blob/master/keras/DL-features.ipynb
 #version history:
     -20180222 by Jian: first pass
+    -20180620 by Jian: download jpg directly
 """
 
-from scipy.misc import imread, imresize
-from keras.applications.xception import Xception
-from keras.applications.imagenet_utils import decode_predictions
-from keras.applications.xception import preprocess_input
-import numpy as np
 
+
+from PIL import Image
+from StringIO import StringIO
+import requests
 # Image URLs and collage grid structure
 img_info = [("https://www.awesomeinventions.com/wp-content/uploads/2016/03/dog-or-food-towel.jpg",3,4),
 ("https://www.awesomeinventions.com/wp-content/uploads/2016/03/dog-or-food-muffin.jpg",4,4),
@@ -20,6 +20,23 @@ img_info = [("https://www.awesomeinventions.com/wp-content/uploads/2016/03/dog-o
 ("https://www.awesomeinventions.com/wp-content/uploads/2016/03/dog-or-food-croissant.jpg",3,4),
 ("https://www.awesomeinventions.com/wp-content/uploads/2016/03/dog-or-food-bear.jpg",3,4),
 ("https://www.awesomeinventions.com/wp-content/uploads/2016/03/dog-or-food-bagel.jpg",4,4)]
+
+
+for it in img_info:
+  print(it[0])
+  data = requests.get('https://www.awesomeinventions.com/wp-content/uploads/2016/03/dog-or-food-loaf.jpg').content
+  im = Image.open(StringIO(data)) 
+  print(type(im))
+quit()
+with open('tst.jpg', 'wb') as f:
+    f.write(requests.get('https://www.awesomeinventions.com/wp-content/uploads/2016/03/dog-or-food-loaf.jpg').content)
+# ref: https://stackoverflow.com/questions/43462896/how-do-i-download-images-with-an-https-url-in-python-3?noredirect=1&lq=1
+
+from scipy.misc import imread, imresize
+from keras.applications.xception import Xception
+from keras.applications.imagenet_utils import decode_predictions
+from keras.applications.xception import preprocess_input
+import numpy as np
 
 model = Xception()
 local_path = 'C:/Users/daij12/Downloads/'
